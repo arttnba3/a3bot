@@ -9,7 +9,8 @@ spring:
     plugin-list:
       - com.example.demo.plugin.DemoPlugin
       - com.example.demo.plugin.RepeaterPlugin
-      - com.example.demo.plugin.HelloPlugin
+      - com.example.demo.plugin.TempPrivateMsgPlugin
+      - com.example.demo.plugin.SignInPlugin
 
     # 下面配置event线程池，也可以删掉用默认的
     event:

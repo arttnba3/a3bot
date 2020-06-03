@@ -33,7 +33,7 @@ public class DemoPlugin extends CQPlugin {
 
         if (msg.equals("hi")) {
             // 调用API发送hello
-            cq.sendPrivateMsg(userId, "hello", false);
+            //cq.sendPrivateMsg(userId, "hello", false);
             //cq.sendPrivateMsg(1543127579,"aaa",true);
 
             // 不执行下一个插件
@@ -63,10 +63,10 @@ public class DemoPlugin extends CQPlugin {
             String result = CQCode.at(userId) + "hi";
 
             // 调用API发送消息
-            cq.sendGroupMsg(groupId, result, false);
+            //cq.sendGroupMsg(groupId, result, false);
 
             // 不执行下一个插件
-            return MESSAGE_BLOCK;
+            //return MESSAGE_BLOCK;
         }
 
         // 继续执行下一个插件
