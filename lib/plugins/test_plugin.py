@@ -1,8 +1,8 @@
 from nonebot import on_command, CommandSession
 
-@on_command('')
+#@on_command()
 async def repeater(session: CommandSession):
-    msg = session.get('msg')
+    msg = session.get()
     await session.send(msg)
 
 @repeater.args_parser
@@ -12,7 +12,7 @@ async def _(session: CommandSession):
     if session.is_first_run:
         if stripped_arg:
             # 第一次运行参数不为空
-            session.state['msg'] = stripped_arg
+            session.state = stripped_arg
         return
 
     if not stripped_arg:
