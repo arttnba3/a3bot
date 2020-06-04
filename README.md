@@ -21,17 +21,28 @@ enable_heartbeat=true
 heartbeat_interval=60000
 ```
 
-随后运行酷Q登录机器人账号，再运行DemoApplication，机器人就正式上线了
+随后运行酷Q登录机器人账号，再运行MainApplication，机器人就正式上线了
 
 ## 已实装插件
-暂无
+- 复读姬
+- 签到系统
+
+## 我想开发新插件...
+
+在 ```src\main\java\com\example\demo\plugin```下新建你的自定义插件类
+
+插件类需继承自CQPlugin类，具体格式可参见插件模板```DemoPlugin```
+
+新的插件需要在 ```src\main\resources\application.yml ```下注册
+
 ## to-do list
 开发插件系统
 
 开发几个基础插件
 
-- 签到系统
-- 复读姬
+- 插件热拔插
+
 - 防撤回
 - 图灵api
+- 自动回复（开发中）
 - more...

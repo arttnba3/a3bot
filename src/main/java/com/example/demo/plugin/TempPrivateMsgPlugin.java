@@ -17,10 +17,10 @@ public class TempPrivateMsgPlugin extends CQPlugin
         long user_id = event.getUserId();
 
         if(has_met_for_the_first_time.contains(user_id))
-            ;//cq.sendPrivateMsg(user_id,"目前只有群组复读姬功能啦O.O还请不要发私聊消息",false);
+            cq.sendPrivateMsg(user_id,"anosa...你发的这个指令我无法理解呢O.O",false);
         else
         {
-            cq.sendPrivateMsg(user_id,"你好呀，这里是由arttnba3开发的QQ机器人a3bot~",false);
+            cq.sendPrivateMsg(user_id,"呐呐，这里是由arttnba3开发的QQ机器人a3bot，哟",false);
             has_met_for_the_first_time.add(user_id);
         }
         return MESSAGE_IGNORE;

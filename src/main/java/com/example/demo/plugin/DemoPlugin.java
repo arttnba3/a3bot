@@ -16,8 +16,13 @@ import org.springframework.stereotype.Component;
  * 查看API参数类型：光标移动到方法括号中按Ctrl+P
  * 查看API说明：光标移动到方法括号中按Ctrl+Q
  */
+/*
+ * 注意：新写的插件需要在src\main\resources\application.yml下注册
+ * by arttnba3
+ */
 @Component
-public class DemoPlugin extends CQPlugin {
+public class DemoPlugin extends CQPlugin
+{
     /**
      * 收到私聊消息时会调用这个方法
      *

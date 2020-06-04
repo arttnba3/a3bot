@@ -6,11 +6,13 @@ import net.lz1998.cq.robot.CQPlugin;
 import net.lz1998.cq.robot.CoolQ;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Component
 public class RepeaterPlugin extends CQPlugin
 {
-    String temp_msg = null;
-    boolean is_repeated = false;
+    Map map = new HashMap();
 
     @Override
     public int onPrivateMessage(CoolQ cq, CQPrivateMessageEvent event)
@@ -24,19 +26,35 @@ public class RepeaterPlugin extends CQPlugin
         String msg = event.getMessage();
         long groupId = event.getGroupId();
         long userId = event.getUserId();
-
-        if(msg.equals(temp_msg))
+        if(!map.containsKey(groupId))
         {
-            if(!is_repeated)
+            map.put(groupId, new RepeatInfo(msg, false));
+            return MESSAGE_IGNORE;
+        }
+
+        if(msg.equals(((RepeatInfo)(map.get(groupId))).msg))
+        {
+            if(!((RepeatInfo)(map.get(groupId))).is_repeated)
             {
                 cq.sendGroupMsg(groupId,msg,false);
-                is_repeated = true;
+                ((RepeatInfo)(map.get(groupId))).is_repeated = true;
             }
         }
         else
-            is_repeated = false;
-        temp_msg = msg;
+            ((RepeatInfo)(map.get(groupId))).is_repeated = false;
+        ((RepeatInfo)(map.get(groupId))).msg = msg;
 
         return MESSAGE_IGNORE;
+    }
+}
+
+class RepeatInfo
+{
+    public String msg;
+    public boolean is_repeated;
+    public RepeatInfo(String str,boolean flag)
+    {
+        this.msg = str;
+        this.is_repeated = flag;
     }
 }
