@@ -10,6 +10,8 @@ spring:
       - com.example.demo.plugin.SignInPlugin
       - com.example.demo.plugin.DemoPlugin
       - com.example.demo.plugin.RollPlugin
+      - com.example.demo.plugin.RainbowFartPlugin
+      - com.example.demo.plugin.KillMotherPlugin
       - com.example.demo.plugin.RepeaterPlugin
       - com.example.demo.plugin.TeachMsgPlugin
       - com.example.demo.plugin.TempPrivateMsgPlugin

@@ -4,7 +4,6 @@ import net.lz1998.cq.event.message.CQGroupMessageEvent;
 import net.lz1998.cq.event.message.CQPrivateMessageEvent;
 import net.lz1998.cq.robot.CQPlugin;
 import net.lz1998.cq.robot.CoolQ;
-import net.lz1998.cq.utils.CQCode;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -13,9 +12,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 @Component
-public class RainbowFartPlugin extends CQPlugin
+public class KillMotherPlugin extends CQPlugin
 {
-    String request_url = "https://chp.shadiao.app/api.php?level=";
+    String request_url = "https://nmsl.shadiao.app/api.php?level=";
     int level = 114514;
 
     @Override
@@ -32,8 +31,13 @@ public class RainbowFartPlugin extends CQPlugin
         long groupId = event.getGroupId();
         long userId = event.getUserId();
 
-        if (msg.equals("/rainbow"))
+        if (msg.equals("/nmsl"))
         {
+            if(userId != 1543127579L)
+            {
+                cq.sendGroupMsg(groupId,"Permission denied, authorization limited.",false);
+                return MESSAGE_BLOCK;
+            }
             try
             {
                 URL url = new URL(request_url+String.valueOf(level));
@@ -54,5 +58,4 @@ public class RainbowFartPlugin extends CQPlugin
 
         return MESSAGE_IGNORE;
     }
-
 }
