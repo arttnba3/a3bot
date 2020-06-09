@@ -16,7 +16,7 @@ import java.util.List;
 public class KillMotherPlugin extends CQPlugin
 {
     String request_url = "https://nmsl.shadiao.app/api.php?level=";
-    int level = 114514;
+    long level = 114514;
     long admin = 1543127579L;
     List permission_list = new ArrayList<Long>();
     File file = null;
@@ -127,6 +127,7 @@ public class KillMotherPlugin extends CQPlugin
                     return MESSAGE_BLOCK;
                 }
             }
+
             if(msg.substring(0,9).equals("/nmsl del"))
             {
                 if(userId != admin)
@@ -152,6 +153,28 @@ public class KillMotherPlugin extends CQPlugin
                         fileOutputStream.write('\n');
                         writeID((Long) permission_list.get(i));
                     }
+                    cq.sendGroupMsg(groupId,"Success.",false);
+                    return MESSAGE_BLOCK;
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                    cq.sendGroupMsg(groupId,"incorrect argument(s) input",false);
+                    return MESSAGE_BLOCK;
+                }
+            }
+
+            if(msg.substring(0,9).equals("/nmsl set"))
+            {
+                if(!permission_list.contains(userId))
+                {
+                    cq.sendGroupMsg(groupId,"Permission denied, authorization limited.",false);
+                    return MESSAGE_BLOCK;
+                }
+                try
+                {
+                    long level = Long.valueOf(msg.substring(10));
+                    this.level = level;
                     cq.sendGroupMsg(groupId,"Success.",false);
                     return MESSAGE_BLOCK;
                 }
