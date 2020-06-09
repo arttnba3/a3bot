@@ -13,7 +13,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.lz1998.cq.robot.CQPlugin.MESSAGE_IGNORE;
 
 @Component
 public class AntiSbPlugin extends CQPlugin
