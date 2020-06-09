@@ -90,6 +90,8 @@ public class KillMotherPlugin extends CQPlugin
 
                 String rainbow_msg = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream(),"UTF-8")).readLine();
                 cq.sendGroupMsg(groupId,rainbow_msg,false);
+
+                httpURLConnection.disconnect();
             }
             catch (Exception e)
             {

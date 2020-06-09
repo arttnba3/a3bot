@@ -16,7 +16,7 @@ import java.net.URL;
 public class RainbowFartPlugin extends CQPlugin
 {
     String request_url = "https://chp.shadiao.app/api.php?level=";
-    int level = 114514;
+    long level = 114514;
 
     @Override
     public int onPrivateMessage(CoolQ cq, CQPrivateMessageEvent event)
@@ -44,6 +44,8 @@ public class RainbowFartPlugin extends CQPlugin
 
                 String rainbow_msg = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream(),"UTF-8")).readLine();
                 cq.sendGroupMsg(groupId,rainbow_msg,false);
+
+                httpURLConnection.disconnect();
             }
             catch (Exception e)
             {
@@ -52,6 +54,25 @@ public class RainbowFartPlugin extends CQPlugin
             return MESSAGE_BLOCK;
         }
 
+        else if(msg.length()>12)
+        {
+            if(msg.substring(0,12).equals("/rainbow set"))
+            {
+                try
+                {
+                    long level = Long.valueOf(msg.substring(10));
+                    this.level = level;
+                    cq.sendGroupMsg(groupId,"Success.",false);
+                    return MESSAGE_BLOCK;
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                    cq.sendGroupMsg(groupId,"incorrect argument(s) input",false);
+                    return MESSAGE_BLOCK;
+                }
+            }
+        }
         return MESSAGE_IGNORE;
     }
 
