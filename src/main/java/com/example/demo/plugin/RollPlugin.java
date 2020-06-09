@@ -25,7 +25,7 @@ public class RollPlugin extends CQPlugin
     {
         try
         {
-            FileInputStream fileInputStream = new FileInputStream(new File("dining_hall_list.txt"));
+            FileInputStream fileInputStream = new FileInputStream(new File("data/dining_hall_list.txt"));
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream));
             int ch;
             String place = bufferedReader.readLine();

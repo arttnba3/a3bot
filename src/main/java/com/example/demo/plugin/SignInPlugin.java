@@ -1,21 +1,20 @@
 package com.example.demo.plugin;
+import net.lz1998.cq.event.message.CQGroupMessageEvent;
+import net.lz1998.cq.event.message.CQPrivateMessageEvent;
+import net.lz1998.cq.robot.CQPlugin;
+import net.lz1998.cq.robot.CoolQ;
+import net.lz1998.cq.utils.CQCode;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
-        import net.lz1998.cq.event.message.CQGroupMessageEvent;
-        import net.lz1998.cq.event.message.CQPrivateMessageEvent;
-        import net.lz1998.cq.robot.CQPlugin;
-        import net.lz1998.cq.robot.CoolQ;
-        import net.lz1998.cq.utils.CQCode;
-        import org.springframework.scheduling.annotation.Scheduled;
-        import org.springframework.stereotype.Component;
-
-        import java.io.File;
-        import java.io.FileInputStream;
-        import java.io.FileOutputStream;
-        import java.io.IOException;
-        import java.util.ArrayList;
-        import java.util.HashMap;
-        import java.util.List;
-        import java.util.Map;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class SignInPlugin extends CQPlugin
@@ -34,8 +33,8 @@ public class SignInPlugin extends CQPlugin
     public SignInPlugin()
     {
         //两个文件，分别表示私聊的数据和群聊的数据
-        pri_file = new File("pri_sign_in_list.txt");
-        gro_file = new File("gro_sign_in_list.txt");
+        pri_file = new File("data/pri_sign_in_list.txt");
+        gro_file = new File("data/grp_sign_in_list.txt");
         boolean inSpace = true;
         try
         {
@@ -68,17 +67,18 @@ public class SignInPlugin extends CQPlugin
 
             while ((ch=gro_fileInputStream.read())!=-1)
             {
-
                 if(Character.isWhitespace(ch))
                 {
                     if(inSpace)
                         continue;
                     inSpace = true;
-                    if(flag == 1) {
+                    if(flag == 1)
+                    {
                         flag = 2;
                         group_id = num;
                     }
-                    else{
+                    else
+                    {
                         user_id = num;
                         flag = 1;
                         if(gro_sign_in_list.get(group_id) == null)//若群号第一次出现，则新建ArrayList
@@ -94,8 +94,7 @@ public class SignInPlugin extends CQPlugin
             }
             if(num!=0L && flag == 2)
                 gro_sign_in_list.get(group_id).add(num);
-            gro_fileOutputStream = new FileOutputStream(pri_file,true);
-
+            gro_fileOutputStream = new FileOutputStream(gro_file,true);
         }
         catch (Exception e)
         {
@@ -147,6 +146,8 @@ public class SignInPlugin extends CQPlugin
         if(gro_sign_in_list.get(group_id) == null)
             gro_sign_in_list.put(group_id, new ArrayList<>());
 
+        String str = event.getMessageType();
+        System.out.println(str);
         if(msg.equals("/signin")||msg.equals("/签到"))
         {
 
