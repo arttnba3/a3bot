@@ -1,7 +1,7 @@
 package com.example.demo.plugin;
+import a3lib.SuperPlugin;
 import net.lz1998.cq.event.message.CQGroupMessageEvent;
 import net.lz1998.cq.event.message.CQPrivateMessageEvent;
-import net.lz1998.cq.robot.CQPlugin;
 import net.lz1998.cq.robot.CoolQ;
 import net.lz1998.cq.utils.CQCode;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class SignInPlugin extends CQPlugin
+public class SignInPlugin extends SuperPlugin
 {
     List<Long> pri_sign_in_list = new ArrayList<>();//私聊签到名单
 
@@ -105,6 +105,8 @@ public class SignInPlugin extends CQPlugin
     @Override
     public int onPrivateMessage(CoolQ cq, CQPrivateMessageEvent event)
     {
+        if(!is_enabled)
+            return MESSAGE_IGNORE;
         String msg = event.getMessage();
         if(msg.equals("/signin")||msg.equals("/签到"))
         {
@@ -140,6 +142,8 @@ public class SignInPlugin extends CQPlugin
     @Override
     public int onGroupMessage(CoolQ cq, CQGroupMessageEvent event)
     {
+        if(!is_enabled)
+            return MESSAGE_IGNORE;
         String msg = event.getMessage();
         long user_id = event.getUserId();
         long group_id = event.getGroupId();
@@ -200,8 +204,10 @@ public class SignInPlugin extends CQPlugin
         {
             pri_file.delete();
             pri_file.createNewFile();
+            pri_fileOutputStream = new FileOutputStream(pri_file);
             gro_file.delete();
             gro_file.createNewFile();
+            gro_fileOutputStream = new FileOutputStream(gro_file);
         }
         catch (Exception e)
         {

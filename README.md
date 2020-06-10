@@ -25,7 +25,8 @@ heartbeat_interval=60000
 
 ## 已实装插件
 - 复读姬1.0
-- 签到系统2.0.1（赶在新版上线前修复了一些bug，所以直接是2.0.1）
+- 签到系统2.0.2（修复了一个没被发现的2.0版本遗留bug（文件流未刷新导致数据重复））
+- 插件管理系统1.0
 - 随机点餐1.0
 - 俄罗斯转盘1.0
 - 初等学习1.0
@@ -38,7 +39,9 @@ heartbeat_interval=60000
 
 在 ```src\main\java\com\example\demo\plugin```下新建你的自定义插件类
 
-插件类需继承自CQPlugin类，具体格式可参见插件模板```DemoPlugin```
+~~插件类需继承自CQPlugin类，具体格式可参见插件模板```DemoPlugin```~~
+
+**为适应插件管理系统，新的插件应当继承自SuperPlugin类，具体格式参见插件模板DemoPlugin**
 
 新的插件需要在 ```src\main\resources\application.yml ```下注册
 
@@ -47,7 +50,6 @@ heartbeat_interval=60000
 
 开发几个基础插件
 
-- 插件热拔插
 - 防撤回
 - 图灵api
 - 自动回复（开发中）

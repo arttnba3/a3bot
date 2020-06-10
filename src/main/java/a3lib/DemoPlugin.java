@@ -1,4 +1,4 @@
-package com.example.demo.plugin;
+package a3lib;
 
 import net.lz1998.cq.event.message.CQGroupMessageEvent;
 import net.lz1998.cq.event.message.CQPrivateMessageEvent;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
  * by arttnba3
  */
 @Component
-public class DemoPlugin extends CQPlugin
+public class DemoPlugin extends SuperPlugin
 {
     /**
      * 收到私聊消息时会调用这个方法

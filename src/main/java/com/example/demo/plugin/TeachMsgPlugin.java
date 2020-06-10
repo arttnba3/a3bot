@@ -1,5 +1,6 @@
 package com.example.demo.plugin;
 
+import a3lib.SuperPlugin;
 import net.lz1998.cq.event.message.CQGroupMessageEvent;
 import net.lz1998.cq.robot.CQPlugin;
 import net.lz1998.cq.robot.CoolQ;
@@ -9,12 +10,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class TeachMsgPlugin extends CQPlugin
+public class TeachMsgPlugin extends SuperPlugin
 {
     Map map = new HashMap();
     @Override
     public int onGroupMessage(CoolQ cq, CQGroupMessageEvent event)
     {
+        if(!is_enabled)
+            return MESSAGE_IGNORE;
         String msg = event.getMessage();
         long group_id = event.getGroupId();
         if(msg.length()<=6)

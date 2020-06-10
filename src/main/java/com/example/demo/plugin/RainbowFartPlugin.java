@@ -1,5 +1,6 @@
 package com.example.demo.plugin;
 
+import a3lib.SuperPlugin;
 import net.lz1998.cq.event.message.CQGroupMessageEvent;
 import net.lz1998.cq.event.message.CQPrivateMessageEvent;
 import net.lz1998.cq.robot.CQPlugin;
@@ -13,7 +14,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 @Component
-public class RainbowFartPlugin extends CQPlugin
+public class RainbowFartPlugin extends SuperPlugin
 {
     String request_url = "https://chp.shadiao.app/api.php?level=";
     long level = 114514;
@@ -21,12 +22,16 @@ public class RainbowFartPlugin extends CQPlugin
     @Override
     public int onPrivateMessage(CoolQ cq, CQPrivateMessageEvent event)
     {
+        if(!is_enabled)
+            return MESSAGE_IGNORE;
         return MESSAGE_IGNORE;
     }
 
     @Override
     public int onGroupMessage(CoolQ cq, CQGroupMessageEvent event)
     {
+        if(!is_enabled)
+            return MESSAGE_IGNORE;
         // 获取 消息内容 群号 发送者QQ
         String msg = event.getMessage();
         long groupId = event.getGroupId();

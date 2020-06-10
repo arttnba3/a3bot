@@ -1,5 +1,6 @@
 package com.example.demo.plugin;
 
+import a3lib.SuperPlugin;
 import net.lz1998.cq.event.message.CQGroupMessageEvent;
 import net.lz1998.cq.event.message.CQPrivateMessageEvent;
 import net.lz1998.cq.robot.CQPlugin;
@@ -14,7 +15,7 @@ import java.io.InputStreamReader;
 import java.util.*;
 
 @Component
-public class RollPlugin extends CQPlugin
+public class RollPlugin extends SuperPlugin
 {
     List places_to_eat = new ArrayList();
     Random r = new Random();
@@ -44,6 +45,8 @@ public class RollPlugin extends CQPlugin
     @Override
     public int onPrivateMessage(CoolQ cq, CQPrivateMessageEvent event)
     {
+        if(!is_enabled)
+            return MESSAGE_IGNORE;
         long user_id = event.getUserId();
         return MESSAGE_IGNORE;
     }
@@ -51,6 +54,8 @@ public class RollPlugin extends CQPlugin
     @Override
     public int onGroupMessage(CoolQ cq, CQGroupMessageEvent event)
     {
+        if(!is_enabled)
+            return MESSAGE_IGNORE;
         String msg = event.getMessage();
         long group_id = event.getGroupId();
         if(msg.length()<5)

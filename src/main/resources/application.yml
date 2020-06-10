@@ -7,10 +7,10 @@ spring:
     # 如果前一个功能返回MESSAGE_BLOCK，下一个功能不会被执行
     # 如果前一个功能返回MESSAGE_IGNORE，会继续执行下一个功能
     plugin-list:
+      - com.example.demo.plugin.PluginSystemPlugin
       - com.example.demo.plugin.AntiSbPlugin
       - com.example.demo.plugin.FlattererPlugin
       - com.example.demo.plugin.SignInPlugin
-      - com.example.demo.plugin.DemoPlugin
       - com.example.demo.plugin.RollPlugin
       - com.example.demo.plugin.RainbowFartPlugin
       - com.example.demo.plugin.KillMotherPlugin

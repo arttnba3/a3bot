@@ -123,7 +123,7 @@
         # 如果前一个功能返回MESSAGE_BLOCK，下一个功能不会被执行
         # 如果前一个功能返回MESSAGE_IGNORE，会继续执行下一个功能
         plugin-list:
-          - com.example.demo.plugin.DemoPlugin
+          - a3lib.DemoPlugin
           - com.example.demo.plugin.TestPlugin
           - com.example.demo.plugin.HelloPlugin
     ```
