@@ -10,6 +10,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class AntiWithdrawPlugin extends SuperPlugin
 {
+    public AntiWithdrawPlugin()
+    {
+        plugin_name = "AntiWithdrawPlugin";
+    }
     @Override
     public int onPrivateMessage(CoolQ cq, CQPrivateMessageEvent event)
     {

@@ -14,6 +14,11 @@ public class RepeaterPlugin extends SuperPlugin
 {
     Map map = new HashMap();
 
+    public RepeaterPlugin()
+    {
+        plugin_name = "RepeaterPlugin";
+    }
+
     @Override
     public int onPrivateMessage(CoolQ cq, CQPrivateMessageEvent event)
     {

@@ -26,6 +26,7 @@ public class KillMotherPlugin extends SuperPlugin
 
     public KillMotherPlugin()
     {
+        plugin_name = "KillMotherPlugin";
         file = new File("data/nmsl_permission.txt");
         try
         {

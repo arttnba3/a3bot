@@ -13,6 +13,12 @@ import java.util.Map;
 public class TeachMsgPlugin extends SuperPlugin
 {
     Map map = new HashMap();
+
+    public TeachMsgPlugin()
+    {
+        plugin_name = "TeachMsgPlugin";
+    }
+
     @Override
     public int onGroupMessage(CoolQ cq, CQGroupMessageEvent event)
     {

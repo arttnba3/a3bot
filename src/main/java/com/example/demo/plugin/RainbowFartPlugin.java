@@ -19,6 +19,11 @@ public class RainbowFartPlugin extends SuperPlugin
     String request_url = "https://chp.shadiao.app/api.php?level=";
     long level = 114514;
 
+    public RainbowFartPlugin()
+    {
+        plugin_name = "RainbowFartPlugin";
+    }
+
     @Override
     public int onPrivateMessage(CoolQ cq, CQPrivateMessageEvent event)
     {

@@ -12,6 +12,12 @@ import java.util.ArrayList;
 public class TempPrivateMsgPlugin extends SuperPlugin
 {
     ArrayList has_met_for_the_first_time = new ArrayList<Integer>();
+
+    public TempPrivateMsgPlugin()
+    {
+        plugin_name = "TempPrivateMsgPlugin";
+    }
+
     @Override
     public int onPrivateMessage(CoolQ cq, CQPrivateMessageEvent event)
     {

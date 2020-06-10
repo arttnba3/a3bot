@@ -32,6 +32,7 @@ public class SignInPlugin extends SuperPlugin
 
     public SignInPlugin()
     {
+        plugin_name = "SignInPlugin";
         //两个文件，分别表示私聊的数据和群聊的数据
         pri_file = new File("data/pri_sign_in_list.txt");
         gro_file = new File("data/grp_sign_in_list.txt");

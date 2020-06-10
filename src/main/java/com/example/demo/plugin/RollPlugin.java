@@ -24,6 +24,7 @@ public class RollPlugin extends SuperPlugin
 
     public RollPlugin()
     {
+        plugin_name = "RollPlugin";
         try
         {
             FileInputStream fileInputStream = new FileInputStream(new File("data/dining_hall_list.txt"));

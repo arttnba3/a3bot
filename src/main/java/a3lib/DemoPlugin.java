@@ -23,6 +23,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class DemoPlugin extends SuperPlugin
 {
+    //在这里写上插件名称以便toString()方法调用
+    public DemoPlugin()
+    {
+        plugin_name = "DemoPlugin";
+    }
+
     /**
      * 收到私聊消息时会调用这个方法
      *

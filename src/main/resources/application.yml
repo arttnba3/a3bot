@@ -12,6 +12,7 @@ spring:
       - com.example.demo.plugin.FlattererPlugin
       - com.example.demo.plugin.SignInPlugin
       - com.example.demo.plugin.RollPlugin
+      - com.example.demo.plugin.HitokotoPlugin
       - com.example.demo.plugin.RainbowFartPlugin
       - com.example.demo.plugin.KillMotherPlugin
       - com.example.demo.plugin.RepeaterPlugin

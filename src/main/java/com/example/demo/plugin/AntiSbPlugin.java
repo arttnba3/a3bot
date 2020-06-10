@@ -28,6 +28,7 @@ public class AntiSbPlugin extends SuperPlugin
 
     public AntiSbPlugin()
     {
+        plugin_name = "AntiSbPlugin";
         file = new File("data/sb_list.txt");
         try
         {

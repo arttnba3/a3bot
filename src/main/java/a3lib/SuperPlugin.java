@@ -6,5 +6,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class SuperPlugin extends CQPlugin
 {
+    public String plugin_name = null;
     public boolean is_enabled = true;
+
+    @Override
+    public String toString()
+    {
+        return plugin_name;
+    }
 }

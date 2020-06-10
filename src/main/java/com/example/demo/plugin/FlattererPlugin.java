@@ -28,6 +28,7 @@ public class FlattererPlugin extends SuperPlugin
 
     public FlattererPlugin()
     {
+        plugin_name = "FlattererPlugin";
         file = new File("data/gods_list.txt");
         try
         {
