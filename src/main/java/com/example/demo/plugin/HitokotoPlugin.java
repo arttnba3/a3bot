@@ -40,7 +40,6 @@ public class HitokotoPlugin extends SuperPlugin
         long userId = event.getUserId();
         if(msg.length()==9&&(msg.equals("/hitokoto")||msg.equals("/Hitokoto")))
         {
-            String[] str = msg.split("");
             try
             {
                 URL url = new URL(request_url);
@@ -65,8 +64,8 @@ public class HitokotoPlugin extends SuperPlugin
 
         if(msg.length()>9&&(msg.substring(0,9).equals("/hitokoto")||msg.substring(0,9).equals("/Hitokoto")))
         {
-            String[] str = msg.split("");
-            if(str.length == msg.length())
+            String[] str = msg.split(" ");
+            if(str.length < 2)
             {
                 cq.sendGroupMsg(groupId,"用法：/hitokoto {参数}\n参数为可选选项，多余的参数会被忽略",false);
                 return MESSAGE_BLOCK;

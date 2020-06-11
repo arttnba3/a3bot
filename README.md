@@ -53,6 +53,7 @@ heartbeat_interval=60000
 
 - 防撤回
 - 图灵api
+- 三国杀（开发中）
 - 自动回复（开发中）
 - more...
 
