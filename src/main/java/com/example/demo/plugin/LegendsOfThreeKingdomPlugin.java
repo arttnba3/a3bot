@@ -21,6 +21,7 @@ public class LegendsOfThreeKingdomPlugin extends SuperPlugin
     final static public int DESIGN_CLUB = 2;//黑梅
     final static public int DESIGN_DIAMOND = 3;//红方
 
+    final static public int CARD_NONE = -1;//空白牌，用作特殊判定，比如说杀的时候不闪
     final static public int CARD_DRINK = 0;//酒
     final static public int CARD_KILL = 1;//杀
     final static public int CARD_KILL_FIRE = 2;//火杀
@@ -59,10 +60,22 @@ public class LegendsOfThreeKingdomPlugin extends SuperPlugin
     final static public int TYPE_BASIC = 0;//基本牌
     final static public int TYPE_STRATEGY = 1;//锦囊牌
 
+    final static public int JOB_KING = 0;//主公
+    final static public int JOB_MINISTER = 1;//忠臣
+    final static public int JOB_REBEL = 2;//反贼
+    final static public int JOB_SPY = 3;//内奸
 
-    List<Player> gamer_list;
+            /*
+    * 以下是一些会用到的全局变量
+    * */
+    List<Player> gamer_list;//玩家列表
     long game_group;//限定一局游戏只能在一个群里开（懒得写多个群的了23333
-    long admin = 1543127579;
+    long admin = 1543127579;//管理员，默认是开发者23333
+    int response_amount = 0;//响应人数，用于在南蛮入侵与万箭齐发进行判定
+    int alive_amount = 0;//存活人数，用于与上一个进行配套判定
+    int alive_rebel_amount = 0;//存活反贼数量
+    int alive_spy_amount = 0;//存活内奸数量
+    final static Card NONE_CARD = new Card(-1,CARD_NONE,-1,-1,-1);
 
     List<Card> card_list;
     List<Card> card_list_bin;
@@ -78,8 +91,9 @@ public class LegendsOfThreeKingdomPlugin extends SuperPlugin
             +"/kingdom stop    ----强制结束一场游戏（仅限管理员）\n"
             +"/kingdom next    ----强制进入下一个玩家的回合（仅限管理员）\n"
             +"以下是可以使用的私聊指令（游戏开始后）\n"
-            +"/kingdom show    ----查看你的手牌\n"
+            +"/kingdom show    ----查看你的状态与手牌\n"
             +"/kingdom use [number] [object]      ----通过卡牌编号使用卡牌，其中object项为可选项，需输入对象玩家编号\n"
+            +"如果没有相应的对策卡，请输入/kingdom use -1"
             +"/kingdom load [number]    ----通过卡牌编号装备一张装备卡，原有的装备会被替换\n"
             +"/kingdom unload [number]    ----通过卡牌编号卸下一张装备卡\n"
             +"/kingdom end    ----结束你的回合";
@@ -169,7 +183,20 @@ public class LegendsOfThreeKingdomPlugin extends SuperPlugin
 
             if(args[1].equals("show"))
             {
-                cq.sendPrivateMsg(userId,player.showCard(),false);
+                cq.sendPrivateMsg(userId,
+                        "你的游戏ID是："
+                                +String.valueOf(player.playerId)
+                                +"\n"
+                                +"你当前的生命值是："
+                                +String.valueOf(player.lives)
+                                +"\n"
+                                + "你的身份是："
+                                +player.getJob()
+                                +"\n"
+                                +"你当前的状态是："
+                                +player.getState()
+                                +player.showCard()
+                        ,false);
                 return MESSAGE_BLOCK;
             }
             if(args[1].equals("use"))
@@ -182,6 +209,14 @@ public class LegendsOfThreeKingdomPlugin extends SuperPlugin
                 try
                 {
                     int card_num = Integer.parseInt(args[2]);
+                    int objectId = -1;
+                    if(args.length>3)
+                        objectId = Integer.valueOf(args[3]);
+                    if(card_num == -1)
+                    {
+                        useCard(cq,player,NONE_CARD,objectId);
+                        return MESSAGE_BLOCK;
+                    }
                     Card card = null;
                     for(int i = 0;i<player.card_list.size();i++)
                     {
@@ -196,9 +231,6 @@ public class LegendsOfThreeKingdomPlugin extends SuperPlugin
                         cq.sendPrivateMsg(userId,"O▲O！...你并没有这张卡哦~",false);
                         return MESSAGE_BLOCK;
                     }
-                    int objectId = -1;
-                    if(args.length>3)
-                        objectId = Integer.valueOf(args[3]);
                     boolean success = useCard(cq,player,card,objectId);
                     if(success)
                         player.card_list.remove(card);
@@ -234,6 +266,44 @@ public class LegendsOfThreeKingdomPlugin extends SuperPlugin
         return MESSAGE_IGNORE;
     }
 
+    /*
+    * 对于玩家死亡的判定
+    * */
+    public void killPlayer(CoolQ cq,Player player)
+    {
+        player.is_dead = true;
+        cq.sendGroupMsg(game_group,
+                "玩家"
+                        +CQCode.at(player.userId)
+                        +"在三国的乱世纷争中阵亡了！\n"
+                        +"他的身份是："
+                        +player.getJob()
+                ,false);
+        if(player.job==JOB_KING)
+        {
+            is_running = false;
+            cq.sendGroupMsg(game_group,"主公阵亡，游戏结束>  <！",false);
+            cq.sendGroupMsg(game_group,"最后的获胜阵营是："+(alive_rebel_amount==0?"内奸":"反贼"),false);
+        }
+        if(player.job==JOB_REBEL)
+        {
+            alive_rebel_amount--;
+            cq.sendGroupMsg(game_group,
+                    "玩家"
+                            +CQCode.at(gamer_list.get(player.killerId).userId)
+                            +"击杀反贼！获得奖励三张手牌！"
+                    ,false);
+
+        }
+        if(player.job==JOB_SPY)
+            alive_spy_amount--;
+        if(alive_rebel_amount==0&&alive_spy_amount==0)
+        {
+            is_running = false;
+            cq.sendGroupMsg(game_group,"反贼与内奸全部阵亡，游戏结束>  <！",false);
+            cq.sendGroupMsg(game_group,"最后的获胜阵营是：主公&忠臣",false);
+        }
+    }
 
     /*
     * 假定玩家已有该手牌
@@ -242,6 +312,42 @@ public class LegendsOfThreeKingdomPlugin extends SuperPlugin
     {
         switch(card.name)
         {
+            case CARD_NONE:
+            {
+                if(player.being_dead)//不自救
+                {
+                    killPlayer(cq,player);
+                }
+                if(player.being_shoot||player.being_wanted)//对于南蛮入侵与万箭齐发的判定
+                {
+                    response_amount++;
+                    if(player.armor.name == CARD_GRASS_ARMOR)//藤甲，永远滴神
+                        player.being_shoot = player.being_wanted = false;
+                    if(response_amount == alive_amount-1)
+                    {
+                        Player gamer = null;
+                        for(int i = 0;i<gamer_list.size();i++)
+                        {
+                            gamer = gamer_list.get(i);
+                            if(!gamer.is_dead)
+                            {
+                                if(gamer.being_shoot||gamer.being_wanted)
+                                {
+                                    cq.sendGroupMsg(game_group,"玩家"+CQCode.at(player.userId)
+                                            +"受到了来自"
+                                            +(gamer.being_shoot?"万箭齐发":"南蛮入侵")
+                                            +"的【1】点伤害！",false);
+                                    gamer.lives--;
+                                }
+                                if(gamer.lives<=0)
+                                {
+                                    gamer.being_dead = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             case CARD_DRINK:
                 if(player.drunk)
                 {
@@ -254,8 +360,9 @@ public class LegendsOfThreeKingdomPlugin extends SuperPlugin
                     return false;
                 }
                 player.drunk = true;
-                if(player.being_killing&&player.lives-player.killing_lives<=0)//濒死阶段打出酒
+                if(player.being_dead)//濒死阶段打出酒
                 {
+                    cq.sendGroupMsg(game_group,"玩家"+CQCode.at(player.userId)+"对自己使用了一张酒！",false);
                     player.lives = 1;
                     player.drunk = false;
                 }
@@ -366,6 +473,7 @@ public class LegendsOfThreeKingdomPlugin extends SuperPlugin
                     cq.sendPrivateMsg(player.userId,"由于对方玩家装备了藤甲，本次杀无效>  <！",false);
                     return false;
                 }
+                cq.sendPrivateMsg(player.userId,"使用成功！等待对方玩家反应中...",false);
                 cq.sendGroupMsg(game_group,"等待玩家"+CQCode.at(the_killed.userId)+"反应中...",false);
                 player.enable = false;
                 player.has_killed = true;
@@ -373,7 +481,23 @@ public class LegendsOfThreeKingdomPlugin extends SuperPlugin
                 the_killed.killing_lives = (card.name==CARD_KILL_FIRE&&the_killed.armor.name==CARD_GRASS_ARMOR)?2:1;
                 break;
             case CARD_DODGE:
-                
+                if(player.being_killing)
+                {
+                    cq.sendPrivateMsg(player.userId,"你没被杀也没被万箭齐发你打个🔨闪",false);
+                    return false;
+                }
+                if(player.being_killing)
+                {
+                    player.being_killing = false;
+                    player.killing_lives = -1;
+                    gamer_list.get(player.killerId).enable = true;
+                }
+                if(player.being_shoot)
+                {
+
+                }
+                cq.sendGroupMsg(game_group,"玩家"+CQCode.at(player.userId)+"打出了一张闪>  <",false);
+                return true;
         }
         return true;
     }
@@ -548,8 +672,11 @@ class Player
     public boolean enable = false;
     public boolean drunk = false;
     public boolean has_killed = false;//已经用过杀了，配合诸葛连弩进行判定（顺便求一个更好的译名
-    public boolean is_dead = false;
-    public boolean being_killing = false;
+    public boolean being_dead = false;//濒死状态
+    public boolean is_dead = false;//你死le
+    public boolean being_killing = false;//被杀
+    public boolean being_shoot = false;//有人用了万箭齐发
+    public boolean being_wanted = false;//有人用了南蛮入侵
     public List<Card> card_list;
     public List<Card> strategy_list;
 
@@ -568,5 +695,32 @@ class Player
         for(int i=0;i<card_list.size();i++)
             msg += card_list.get(i).toString()+"\n";
         return msg;
+    }
+
+    public String getJob()
+    {
+        return (job== LegendsOfThreeKingdomPlugin.JOB_KING?"主公":
+                job== LegendsOfThreeKingdomPlugin.JOB_MINISTER?"忠臣":
+                        job== LegendsOfThreeKingdomPlugin.JOB_REBEL?"反贼":
+                                job== LegendsOfThreeKingdomPlugin.JOB_SPY?"内奸":
+                                        "无身份");
+    }
+
+    public String getState()
+    {
+        String state = "\n";
+        if(being_wanted)
+            state += "受到【南蛮入侵】的号召\n";
+        if(being_shoot)
+            state += "遭到【万箭齐发】的攻击\n";
+        if(being_killing)
+            state += "正在被杀\n";
+        if(being_dead)
+            state += "濒死\n";
+        if(is_dead)
+            state += "死亡\n";
+        if(state.equals("\n"))
+            state += "无异常状态，存活\n";
+        return state;
     }
 }
