@@ -1,9 +1,11 @@
 package com.example.demo.plugin;
 
 import a3lib.SuperPlugin;
+import com.sun.org.apache.bcel.internal.generic.SWITCH;
 import net.lz1998.cq.event.message.CQGroupMessageEvent;
 import net.lz1998.cq.event.message.CQPrivateMessageEvent;
 import net.lz1998.cq.robot.CoolQ;
+import net.lz1998.cq.utils.CQCode;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -14,6 +16,50 @@ import java.util.List;
 @Component
 public class LegendsOfThreeKingdomPlugin extends SuperPlugin
 {
+    final static public int DESIGN_SPADE = 0;//黑桃
+    final static public int DESIGN_HEART = 1;//红心
+    final static public int DESIGN_CLUB = 2;//黑梅
+    final static public int DESIGN_DIAMOND = 3;//红方
+
+    final static public int CARD_DRINK = 0;//酒
+    final static public int CARD_KILL = 1;//杀
+    final static public int CARD_KILL_FIRE = 2;//火杀
+    final static public int CARD_KILL_THUNDER = 3;//雷杀
+    final static public int CARD_DODGE = 4;//闪
+    final static public int CARD_PEACH = 5;//桃
+    final static public int CARD_NONE_FOOD = 6;//兵粮寸断
+    final static public int CARD_BRIDGE_DESTROY = 7;//过河拆桥
+    final static public int CARD_FIRE_ATTACK = 8;//火攻
+    final static public int CARD_LEND_KNIFE_KILL_MAN = 9;//借刀杀人
+    final static public int CARD_DUEL = 10;//决斗
+    final static public int CARD_SO_HAPPY = 11;//乐不思蜀
+    final static public int CARD_SOUTHERN_INVADE = 12;//南蛮入侵
+    final static public int CARD_THUNDER = 13;//闪电
+    final static public int CARD_GET_A_SHEEP = 14;//顺手牵羊
+    final static public int CARD_RECOVERY_ALL = 15;//桃园结义
+    final static public int CARD_IRON_LINK = 16;//铁索连环
+    final static public int CARD_ARROWS_RAIN = 17;//万箭齐发
+    final static public int CARD_UNAVAILABLE = 18;//无懈可击
+    final static public int CARD_GET_TWO_CARD = 19;//无中生有
+    final static public int CARD_HARVEST = 20;//五谷丰登
+    final static public int CARD_EIGHT_TRIGRAMS = 21;//八卦阵
+    final static public int CARD_SILVER_LION = 22;//白银狮子
+    final static public int CARD_SHIELD = 23;//仁王盾
+    final static public int CARD_GRASS_ARMOR = 24;//藤甲
+    final static public int CARD_ADD_ONE_HORSE = 25;//+1🐎
+    final static public int CARD_SUB_ONE_HORSE = 26;//-1🐎
+    final static public int CARD_ADD_ONE_WEAPON = 27;//+1🔪
+    final static public int CARD_ADD_TWO_WEAPON = 28;//+2🔪
+    final static public int CARD_ADD_THREE_WEAPON = 29;//+3🔪
+    final static public int CARD_ADD_FOUR_WEAPON = 30;//+4🔪
+    final static public int CARD_ADD_FIVE_WEAPON = 31;//+5🔪
+    final static public int CARD_UNLIMITED_WEAPON = 32;//诸葛连弩
+
+
+    final static public int TYPE_BASIC = 0;//基本牌
+    final static public int TYPE_STRATEGY = 1;//锦囊牌
+
+
     List<Player> gamer_list;
     long game_group;//限定一局游戏只能在一个群里开（懒得写多个群的了23333
     long admin = 1543127579;
@@ -35,7 +81,8 @@ public class LegendsOfThreeKingdomPlugin extends SuperPlugin
             +"/kingdom show    ----查看你的手牌\n"
             +"/kingdom use [number] [object]      ----通过卡牌编号使用卡牌，其中object项为可选项，需输入对象玩家编号\n"
             +"/kingdom load [number]    ----通过卡牌编号装备一张装备卡，原有的装备会被替换\n"
-            +"/kingdom unload [number]    ----通过卡牌编号卸下一张装备卡";
+            +"/kingdom unload [number]    ----通过卡牌编号卸下一张装备卡\n"
+            +"/kingdom end    ----结束你的回合";
 
     public LegendsOfThreeKingdomPlugin()
     {
@@ -44,6 +91,11 @@ public class LegendsOfThreeKingdomPlugin extends SuperPlugin
         card_list = new ArrayList<Card>();
         card_list_bin = new ArrayList<Card>();
 
+        /*
+        * 卡牌储存格式如下：
+        * [卡牌序号] [卡牌名称] [卡牌点数] [卡牌花色] [卡牌种类]
+        * 具体数据对应详见上面
+        * */
         File file = new File("data/kingdom_legend_card_list.txt");
         try (FileInputStream fileInputStream = new FileInputStream(file))
         {
@@ -91,7 +143,7 @@ public class LegendsOfThreeKingdomPlugin extends SuperPlugin
             if(!is_running)
             {
                 cq.sendPrivateMsg(userId,"当前还没有开始一场游戏哦~",false);
-                return MESSAGE_IGNORE;
+                return MESSAGE_BLOCK;
             }
             String[] args = msg.split(" ");
             if(args.length == 1)
@@ -141,13 +193,18 @@ public class LegendsOfThreeKingdomPlugin extends SuperPlugin
                     }
                     if(card == null)
                     {
-                        cq.sendPrivateMsg(userId,"你并没有这张卡哦~",false);
+                        cq.sendPrivateMsg(userId,"O▲O！...你并没有这张卡哦~",false);
                         return MESSAGE_BLOCK;
                     }
-                    switch(card.name)
-                    {
-
-                    }
+                    int objectId = -1;
+                    if(args.length>3)
+                        objectId = Integer.valueOf(args[3]);
+                    boolean success = useCard(cq,player,card,objectId);
+                    if(success)
+                        player.card_list.remove(card);
+                    else
+                        cq.sendPrivateMsg(userId,"卡牌使用失败>  <！",false);
+                    return MESSAGE_BLOCK;
                 }
                 catch (Exception e)
                 {
@@ -178,9 +235,147 @@ public class LegendsOfThreeKingdomPlugin extends SuperPlugin
     }
 
 
-    public void useCard(CoolQ cq,long userId, long objectId)
+    /*
+    * 假定玩家已有该手牌
+    * */
+    public boolean useCard(CoolQ cq,Player player, Card card, long objectId)
     {
-
+        switch(card.name)
+        {
+            case CARD_DRINK:
+                if(player.drunk)
+                {
+                    cq.sendPrivateMsg(player.userId,"你已经喝过酒啦>  <！",false);
+                    return false;
+                }
+                if(!player.enable)
+                {
+                    cq.sendPrivateMsg(player.userId,"还没到你的出牌时间哦>  <！",false);
+                    return false;
+                }
+                player.drunk = true;
+                if(player.being_killing&&player.lives-player.killing_lives<=0)//濒死阶段打出酒
+                {
+                    player.lives = 1;
+                    player.drunk = false;
+                }
+                break;
+            case CARD_KILL:
+            case CARD_KILL_FIRE:
+            case CARD_KILL_THUNDER:
+                if(!player.enable)
+                {
+                    cq.sendPrivateMsg(player.userId,"还没到你的出牌时间哦>  <！",false);
+                    return false;
+                }
+                if(objectId == -1)
+                {
+                    cq.sendPrivateMsg(player.userId,"请输入目标ID>   <！",false);
+                    return false;
+                }
+                if(player.has_killed&&player.armor.name!=CARD_UNLIMITED_WEAPON)
+                {
+                    cq.sendPrivateMsg(player.userId,"你本回合已经出过杀了>   <！",false);
+                    return false;
+                }
+                Player the_killed = null;
+                for(int i=0;i<gamer_list.size();i++)
+                {
+                    if(gamer_list.get(i).playerId == objectId)
+                    {
+                        the_killed = gamer_list.get(i);
+                        break;
+                    }
+                }
+                if(the_killed == null)
+                {
+                    cq.sendPrivateMsg(player.userId,"请输入正确的目标ID>   <！",false);
+                    return false;
+                }
+                if(the_killed.is_dead)
+                {
+                    cq.sendPrivateMsg(player.userId,"这个人早就死啦>   <！",false);
+                    return false;
+                }
+                if(the_killed.playerId == player.playerId)
+                {
+                    cq.sendPrivateMsg(player.userId,"你不能杀你自己>   <！",false);
+                    return false;
+                }
+                /*
+                * 下面是十分费力的计算玩家距离的代码
+                * 希望有大佬能够帮忙进行优化XD
+                * */
+                int distance_left = 0, distance_right = 0;
+                for(int i=0, position_now = player.playerId,position_next = (player.playerId+1)%gamer_list.size();i<gamer_list.size();i++)
+                {
+                    distance_left = 1;
+                    if(position_next!=objectId)
+                    {
+                        if(!gamer_list.get(position_next).is_dead)
+                            distance_left++;
+                        position_next++;
+                        position_next+=gamer_list.size();
+                        position_next%=gamer_list.size();
+                        continue;
+                    }
+                    if(player.minus_horse!=null)
+                        distance_left--;
+                    if(the_killed.plus_horse!=null)
+                        distance_left++;
+                    break;
+                }
+                for(int i=0, position_now = player.playerId,position_next = (player.playerId+1)%gamer_list.size();i<gamer_list.size();i++)
+                {
+                    distance_right = 1;
+                    if(position_next!=objectId)
+                    {
+                        if(!gamer_list.get(position_next).is_dead)
+                            distance_right++;
+                        position_next--;
+                        position_next+=gamer_list.size();
+                        position_next%=gamer_list.size();
+                        continue;
+                    }
+                    if(player.minus_horse!=null)
+                        distance_right--;
+                    if(the_killed.plus_horse!=null)
+                        distance_right++;
+                    break;
+                }
+                int distance = distance_left>distance_right?distance_right:distance_left;
+                int killing_distance = (player.weapon == null || player.weapon.name == CARD_UNLIMITED_WEAPON)?1:(player.weapon.name-CARD_ADD_ONE_WEAPON+1);
+                if(distance>killing_distance)
+                {
+                    cq.sendPrivateMsg(player.userId,"anosa...距离太远你杀不到他哦>  <...",false);
+                    return false;
+                }
+                cq.sendGroupMsg(game_group,"玩家"+ CQCode.at(player.userId)+"对"+CQCode.at(the_killed.userId)
+                        +"打出了一张"
+                        +(card.name==CARD_KILL?"杀！":(card.name==CARD_KILL_FIRE?"火杀！":"雷杀！"))
+                        ,false);
+                if(card.color%2==0&&the_killed.armor.name==CARD_SHIELD)
+                {
+                    cq.sendGroupMsg(game_group,"由于对方玩家装备了仁王盾，本次杀无效>  <！",false);
+                    cq.sendPrivateMsg(player.userId,"由于对方玩家装备了仁王盾，本次杀无效>  <！",false);
+                    return false;
+                }
+                if(card.name == CARD_KILL&&the_killed.armor.name == CARD_GRASS_ARMOR)
+                {
+                    cq.sendGroupMsg(game_group,"由于对方玩家装备了藤甲，本次杀无效>  <！",false);
+                    cq.sendPrivateMsg(player.userId,"由于对方玩家装备了藤甲，本次杀无效>  <！",false);
+                    return false;
+                }
+                cq.sendGroupMsg(game_group,"等待玩家"+CQCode.at(the_killed.userId)+"反应中...",false);
+                player.enable = false;
+                player.has_killed = true;
+                the_killed.being_killing = true;
+                the_killed.killing_lives = (card.name==CARD_KILL_FIRE&&the_killed.armor.name==CARD_GRASS_ARMOR)?2:1;
+                break;
+            case CARD_DODGE:
+                
+        }
+        return true;
     }
 }
 
@@ -199,49 +394,6 @@ class Card
         this.color = color;
         this.type = type;
     }
-
-    final static public int DESIGN_SPADE = 0;//黑桃
-    final static public int DESIGN_HEART = 1;//红心
-    final static public int DESIGN_CLUB = 2;//黑梅
-    final static public int DESIGN_DIAMOND = 3;//红方
-
-    final static public int CARD_DRINK = 0;//酒
-    final static public int CARD_KILL = 1;//杀
-    final static public int CARD_KILL_FIRE = 2;//火杀
-    final static public int CARD_KILL_THUNDER = 3;//雷杀
-    final static public int CARD_DODGE = 4;//闪
-    final static public int CARD_PEACH = 5;//桃
-    final static public int CARD_NONE_FOOD = 6;//兵粮寸断
-    final static public int CARD_BRIDGE_DESTROY = 7;//过河拆桥
-    final static public int CARD_FIRE_ATTACK = 8;//火攻
-    final static public int CARD_LEND_KNIFE_KILL_MAN = 9;//借刀杀人
-    final static public int CARD_DUEL = 10;//决斗
-    final static public int CARD_SO_HAPPY = 11;//乐不思蜀
-    final static public int CARD_SOUTHERN_INVADE = 12;//南蛮入侵
-    final static public int CARD_THUNDER = 13;//闪电
-    final static public int CARD_GET_A_SHEEP = 14;//顺手牵羊
-    final static public int CARD_RECOVERY_ALL = 15;//桃园结义
-    final static public int CARD_IRON_LINK = 16;//铁索连环
-    final static public int CARD_ARROWS_RAIN = 17;//万箭齐发
-    final static public int CARD_UNAVAILABLE = 18;//无懈可击
-    final static public int CARD_GET_TWO_CARD = 19;//无中生有
-    final static public int CARD_HARVEST = 20;//五谷丰登
-    final static public int CARD_EIGHT_TRIGRAMS = 21;//八卦阵
-    final static public int CARD_SILVER_LION = 22;//白银狮子
-    final static public int CARD_SHIELD = 23;//仁王盾
-    final static public int CARD_GRASS_ARMOR = 24;//藤甲
-    final static public int CARD_ADD_ONE_HORSE = 25;//+1🐎
-    final static public int CARD_SUB_ONE_HORSE = 26;//-1🐎
-    final static public int CARD_ADD_ONE_WEAPON = 27;//+1🔪
-    final static public int CARD_ADD_TWO_WEAPON = 28;//+2🔪
-    final static public int CARD_ADD_THREE_WEAPON = 29;//+3🔪
-    final static public int CARD_ADD_FOUR_WEAPON = 30;//+4🔪
-    final static public int CARD_ADD_FIVE_WEAPON = 31;//+5🔪
-    final static public int CARD_UNLIMITED_WEAPON = 32;//诸葛连弩
-
-
-    final static public int TYPE_BASIC = 0;//基本牌
-    final static public int TYPE_STRATEGY = 1;//锦囊牌
 
     @Override
     public String toString()
@@ -383,20 +535,29 @@ class Card
 
 class Player
 {
-    long userId;
+    long userId;//QQ
+    int playerId;//序号
     public int lives = 4;
-    public int weapon = -1;
-    public int armor = -1;
+    public Card weapon = null;
+    public Card armor = null;
+    public Card plus_horse = null;
+    public Card minus_horse = null;
     public int job;//0主公，1忠臣，2反贼，3内奸，-1无身份
+    public int killerId = -1;//杀人者id，用以进行权限返还
+    public int killing_lives = -1;//被杀的生命点数
     public boolean enable = false;
     public boolean drunk = false;
+    public boolean has_killed = false;//已经用过杀了，配合诸葛连弩进行判定（顺便求一个更好的译名
+    public boolean is_dead = false;
     public boolean being_killing = false;
     public List<Card> card_list;
     public List<Card> strategy_list;
-    public Player(long userId, int job)
+
+    public Player(long userId, int job, int playerId)
     {
         this.userId = userId;
         this.job = job;
+        this.playerId = playerId;
         card_list = new ArrayList<>();
         strategy_list = new ArrayList<>();
     }
