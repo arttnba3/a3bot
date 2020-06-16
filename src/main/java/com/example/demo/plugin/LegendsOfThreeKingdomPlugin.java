@@ -306,10 +306,49 @@ public class LegendsOfThreeKingdomPlugin extends SuperPlugin
     }
 
     /*
+    * 对于万箭齐发与南蛮入侵的判定
+    * */
+    public void damageAll(CoolQ cq)
+    {
+        Player gamer = null;
+        for(int i = 0;i<gamer_list.size();i++)
+        {
+            gamer = gamer_list.get(i);
+            if(!gamer.is_dead)
+            {
+                if(gamer.being_shoot||gamer.being_wanted)
+                {
+                    cq.sendGroupMsg(game_group,"玩家"+CQCode.at(gamer.userId)
+                            +"受到了来自"
+                            +(gamer.being_shoot?"万箭齐发":"南蛮入侵")
+                            +"的【1】点伤害！",false);
+                    gamer.lives--;
+                }
+                if(gamer.lives<=0)
+                {
+                    gamer.being_dead = true;
+                    cq.sendGroupMsg(game_group,"玩家"+CQCode.at(gamer.userId)+"进入濒死状态！",false);
+                }
+                gamer.being_shoot = gamer.being_wanted = false;
+            }
+        }
+    }
+
+    /*
     * 假定玩家已有该手牌
     * */
     public boolean useCard(CoolQ cq,Player player, Card card, long objectId)
     {
+        if(player.being_dead&&card.name!=CARD_NONE&&card.name!=CARD_PEACH&&card.name!=CARD_DRINK)
+        {
+            cq.sendPrivateMsg(player.userId,"你已进入濒死状态，请先自救！",false);
+            return false;
+        }
+        if(player.is_dead)
+        {
+            cq.sendPrivateMsg(player.userId,"你已经死le！",false);
+            return false;
+        }
         switch(card.name)
         {
             case CARD_NONE:
@@ -324,28 +363,7 @@ public class LegendsOfThreeKingdomPlugin extends SuperPlugin
                     if(player.armor.name == CARD_GRASS_ARMOR)//藤甲，永远滴神
                         player.being_shoot = player.being_wanted = false;
                     if(response_amount == alive_amount-1)
-                    {
-                        Player gamer = null;
-                        for(int i = 0;i<gamer_list.size();i++)
-                        {
-                            gamer = gamer_list.get(i);
-                            if(!gamer.is_dead)
-                            {
-                                if(gamer.being_shoot||gamer.being_wanted)
-                                {
-                                    cq.sendGroupMsg(game_group,"玩家"+CQCode.at(player.userId)
-                                            +"受到了来自"
-                                            +(gamer.being_shoot?"万箭齐发":"南蛮入侵")
-                                            +"的【1】点伤害！",false);
-                                    gamer.lives--;
-                                }
-                                if(gamer.lives<=0)
-                                {
-                                    gamer.being_dead = true;
-                                }
-                            }
-                        }
-                    }
+                        damageAll(cq);
                 }
             }
             case CARD_DRINK:
@@ -364,12 +382,20 @@ public class LegendsOfThreeKingdomPlugin extends SuperPlugin
                 {
                     cq.sendGroupMsg(game_group,"玩家"+CQCode.at(player.userId)+"对自己使用了一张酒！",false);
                     player.lives = 1;
+                    player.being_dead = false;
                     player.drunk = false;
                 }
                 break;
             case CARD_KILL:
             case CARD_KILL_FIRE:
             case CARD_KILL_THUNDER:
+                if(player.being_wanted)//南蛮入侵
+                {
+                    player.being_wanted = false;
+                    response_amount++;
+                    if(response_amount == alive_amount-1)
+                        damageAll(cq);
+                }
                 if(!player.enable)
                 {
                     cq.sendPrivateMsg(player.userId,"还没到你的出牌时间哦>  <！",false);
@@ -450,7 +476,7 @@ public class LegendsOfThreeKingdomPlugin extends SuperPlugin
                         distance_right++;
                     break;
                 }
-                int distance = distance_left>distance_right?distance_right:distance_left;
+                int distance = Math.min(distance_left, distance_right);
                 int killing_distance = (player.weapon == null || player.weapon.name == CARD_UNLIMITED_WEAPON)?1:(player.weapon.name-CARD_ADD_ONE_WEAPON+1);
                 if(distance>killing_distance)
                 {
@@ -481,20 +507,23 @@ public class LegendsOfThreeKingdomPlugin extends SuperPlugin
                 the_killed.killing_lives = (card.name==CARD_KILL_FIRE&&the_killed.armor.name==CARD_GRASS_ARMOR)?2:1;
                 break;
             case CARD_DODGE:
-                if(player.being_killing)
+                if(!player.being_killing&&!player.being_shoot)
                 {
                     cq.sendPrivateMsg(player.userId,"你没被杀也没被万箭齐发你打个🔨闪",false);
                     return false;
                 }
-                if(player.being_killing)
+                if(player.being_killing)//被杀
                 {
                     player.being_killing = false;
                     player.killing_lives = -1;
                     gamer_list.get(player.killerId).enable = true;
                 }
-                if(player.being_shoot)
+                if(player.being_shoot)//万箭齐发
                 {
-
+                    player.being_shoot = false;
+                    response_amount++;
+                    if(response_amount == alive_amount-1)
+                        damageAll(cq);
                 }
                 cq.sendGroupMsg(game_group,"玩家"+CQCode.at(player.userId)+"打出了一张闪>  <",false);
                 return true;

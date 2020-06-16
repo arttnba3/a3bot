@@ -6,6 +6,7 @@ import net.lz1998.cq.robot.CQPlugin;
 import net.lz1998.cq.robot.CoolQ;
 import org.springframework.stereotype.Component;
 
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,6 +40,61 @@ public class TeachMsgPlugin extends SuperPlugin
                 return MESSAGE_BLOCK;
             }
             return MESSAGE_IGNORE;
+        }
+        if(msg.equals("/teach save"))
+        {
+            long userId = event.getUserId();
+            if(userId != 1543127579L)
+            {
+                cq.sendGroupMsg(group_id,"Permission denied, authorization limited.",false);
+                return MESSAGE_BLOCK;
+            }
+            try
+            {
+                File file = new File("teach_data");
+                if(!file.exists())
+                    file.createNewFile();
+                OutputStream outputStream = new FileOutputStream(file);
+                ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
+                objectOutputStream.writeObject(map);
+                objectOutputStream.close();
+                outputStream.close();
+                cq.sendGroupMsg(group_id,"数据文件已保存",false);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            return MESSAGE_BLOCK;
+        }
+        if(msg.equals("/teach load"))
+        {
+            long userId = event.getUserId();
+            if(userId != 1543127579L)
+            {
+                cq.sendGroupMsg(group_id,"Permission denied, authorization limited.",false);
+                return MESSAGE_BLOCK;
+            }
+            try
+            {
+                File file = new File("teach_data");
+                if(!file.exists())
+                {
+                    file.createNewFile();
+                    cq.sendGroupMsg(group_id,"数据文件不存在",false);
+                    return MESSAGE_BLOCK;
+                }
+                InputStream inputStream = new FileInputStream(file);
+                ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
+                map = (Map) objectInputStream.readObject();
+                objectInputStream.close();
+                inputStream.close();
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            return MESSAGE_BLOCK;
         }
         if(msg.substring(0,7).equals("/teach "))
         {
