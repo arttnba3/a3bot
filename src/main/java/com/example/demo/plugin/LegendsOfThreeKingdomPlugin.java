@@ -1,7 +1,6 @@
 package com.example.demo.plugin;
 
 import a3lib.SuperPlugin;
-import com.sun.org.apache.bcel.internal.generic.SWITCH;
 import net.lz1998.cq.event.message.CQGroupMessageEvent;
 import net.lz1998.cq.event.message.CQPrivateMessageEvent;
 import net.lz1998.cq.robot.CoolQ;
