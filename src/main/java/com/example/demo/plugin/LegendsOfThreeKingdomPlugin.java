@@ -7,7 +7,6 @@ import net.lz1998.cq.robot.CoolQ;
 import net.lz1998.cq.utils.CQCode;
 import org.springframework.stereotype.Component;
 
-import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.*;

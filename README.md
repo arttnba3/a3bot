@@ -5,7 +5,7 @@ a3bot是由arttnba3开发的一个基于酷Q、cqhttp、[springCQ](https://githu
 本机器人使用反向ws代理，默认端口8081
 
 ## 使用说明
-clone本仓库到本地，使用IDEA打开文件夹后等待一会加载运行库（开发当晚我等着等着就睡着了XD）
+clone本仓库到本地，使用IDEA打开文件夹后等待一会加载运行库（部署当晚我等着等着就睡着了XD）
 
 下载酷Q与cqhttp插件，第一次启用cqhttp插件后关闭酷Q
 
@@ -45,15 +45,15 @@ heartbeat_interval=60000
 
 **为适应插件管理系统，新的插件应当继承自SuperPlugin类，具体格式参见插件模板DemoPlugin**
 
-新的插件需要在 ```src\main\resources\application.yml ```下注册
+新的插件需要在 ```src\main\resources\application.yml ```下注册，注册顺序即为消息读取顺序
 
 ## to-do list
 开发插件系统
 
 开发几个基础插件
 
-- ~~防撤回~~（平台原因无法实现）
-- 图灵api
+- ~~防撤回~~（平台原因无法实现，~~希望某天能开发一个自己的酷Q？~~）
+- 图灵api（有没有富佬支援一个充值账号XD）
 - 自动回复（开发中）
 - more...
 
