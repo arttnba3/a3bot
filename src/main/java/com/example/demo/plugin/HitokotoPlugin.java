@@ -25,6 +25,9 @@ public class HitokotoPlugin extends SuperPlugin
     @Override
     public int onPrivateMessage(CoolQ cq, CQPrivateMessageEvent event)
     {
+        if(!is_enabled)
+            return MESSAGE_IGNORE;
+
         long userId = event.getUserId();
         String msg = event.getMessage();
 
@@ -35,6 +38,9 @@ public class HitokotoPlugin extends SuperPlugin
     @Override
     public int onGroupMessage(CoolQ cq, CQGroupMessageEvent event)
     {
+        if(!is_enabled)
+            return MESSAGE_IGNORE;
+
         String msg = event.getMessage();
         long groupId = event.getGroupId();
         long userId = event.getUserId();

@@ -66,6 +66,7 @@ public class KillMotherPlugin extends SuperPlugin
     {
         if(!is_enabled)
             return MESSAGE_IGNORE;
+
         return MESSAGE_IGNORE;
     }
 

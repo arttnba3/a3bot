@@ -57,6 +57,7 @@ public class RollPlugin extends SuperPlugin
     {
         if(!is_enabled)
             return MESSAGE_IGNORE;
+
         String msg = event.getMessage();
         long group_id = event.getGroupId();
         if(msg.length()<5)

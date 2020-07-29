@@ -159,6 +159,9 @@ public class LegendsOfThreeKingdomPlugin extends SuperPlugin
     @Override
     public int onPrivateMessage(CoolQ cq, CQPrivateMessageEvent event)
     {
+        if(!is_enabled)
+            return MESSAGE_IGNORE;
+
         long userId = event.getUserId();
         String msg = event.getMessage();
 
@@ -364,6 +367,9 @@ public class LegendsOfThreeKingdomPlugin extends SuperPlugin
     @Override
     public int onGroupMessage(CoolQ cq, CQGroupMessageEvent event)
     {
+        if(!is_enabled)
+            return MESSAGE_IGNORE;
+
         long userId = event.getUserId();
         long groupId = event.getGroupId();
         String msg = event.getMessage();
