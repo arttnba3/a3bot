@@ -8,8 +8,10 @@ import net.lz1998.cq.robot.CoolQ;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Map;
 
 @Component
 public class AnnouncePlugin extends SuperPlugin
@@ -48,8 +50,6 @@ public class AnnouncePlugin extends SuperPlugin
         long groupId = event.getGroupId();
         if(msg.length()<9)
             return MESSAGE_IGNORE;
-        if(msg.substring(0,9)!="/announce")
-            return MESSAGE_IGNORE;
         String[] msg_list = msg.split(" ");
         if(!msg_list[0].equals("/announce")||msg.length()<2)
             return MESSAGE_IGNORE;
@@ -58,20 +58,81 @@ public class AnnouncePlugin extends SuperPlugin
             cq.sendGroupMsg(groupId,"Permission denied, authorizathion limited.",false);
             return MESSAGE_BLOCK;
         }
+        if(msg_list.length < 2)
+        {
+            cq.sendGroupMsg(groupId,help_info,false);
+            return MESSAGE_BLOCK;
+        }
         if(msg_list[1].equals("list"))
         {
             String info = "当前已有的自动播报如下：";
             String list = "";
             for(int i = 0;i<announce_list.size();i++)
             {
-                list = "\n\n" + "id:" + String.valueOf(i) + "\n" +
+                list = list+ "\n\n" +
+                        "id:" + String.valueOf(i) + "\n" +
                         "announcer:" + String.valueOf(announce_list.get(i).announcer) + "\n" +
                         "type:" + (announce_list.get(i).type == 0 ? "private" : "group") + "\n" +
                         "target:" + String.valueOf(announce_list.get(i).target) + "\n" +
                         "time:" + String.valueOf(announce_list.get(i).hour) +":"+ String.valueOf(announce_list.get(i).minute) + "\n" +
-                        list + announce_list.get(i).msg;
+                        "message:" + announce_list.get(i).msg;
             }
             cq.sendGroupMsg(groupId,info+list,false);
+            return MESSAGE_BLOCK;
+        }
+        if(msg_list[1].equals("save"))
+        {
+            if(userId != 1543127579L)
+            {
+                cq.sendGroupMsg(groupId,"Permission denied, authorization limited.",false);
+                return MESSAGE_BLOCK;
+            }
+            try
+            {
+                File file = new File("data/announce.data");
+                if(!file.exists())
+                    file.createNewFile();
+                OutputStream outputStream = new FileOutputStream(file);
+                ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
+                objectOutputStream.writeObject(announce_list);
+                objectOutputStream.close();
+                outputStream.close();
+                cq.sendGroupMsg(groupId,"数据文件已保存",false);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            return MESSAGE_BLOCK;
+        }
+        if(msg_list[1].equals("load"))
+        {
+            if(userId != 1543127579L)
+            {
+                cq.sendGroupMsg(groupId,"Permission denied, authorization limited.",false);
+                return MESSAGE_BLOCK;
+            }
+            try
+            {
+                File file = new File("data/announce.data");
+                if(!file.exists())
+                {
+                    file.createNewFile();
+                    cq.sendGroupMsg(groupId,"数据文件不存在",false);
+                    return MESSAGE_BLOCK;
+                }
+                InputStream inputStream = new FileInputStream(file);
+                ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
+                announce_list = (ArrayList<AnnounceInfo>) objectInputStream.readObject();
+                objectInputStream.close();
+                inputStream.close();
+                cq.sendGroupMsg(groupId,"数据文件已载入",false);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            return MESSAGE_BLOCK;
         }
         if(msg_list[1].equals("del"))
         {
@@ -95,8 +156,8 @@ public class AnnouncePlugin extends SuperPlugin
             {
                 e.printStackTrace();
                 cq.sendGroupMsg(groupId,help_info2,false);
-                return MESSAGE_BLOCK;
             }
+            return MESSAGE_BLOCK;
         }
         if(msg_list.length < 7)
         {
@@ -105,9 +166,14 @@ public class AnnouncePlugin extends SuperPlugin
         }
         try
         {
-            int type = Integer.parseInt(msg_list[1]);
-            long announcer = Integer.parseInt(msg_list[2]);
-            long target = Integer.parseInt(msg_list[3]);
+            int type = msg_list[1].equals("private") ? 0 : (msg_list[1].equals("group") ? 1 : 2);
+            if(type == 2)
+            {
+                cq.sendGroupMsg(groupId,help_info,false);
+                return MESSAGE_BLOCK;
+            }
+            long announcer = Long.valueOf(msg_list[2]);
+            long target = Long.valueOf(msg_list[3]);
             int hour = Integer.parseInt(msg_list[4]);
             int minute = Integer.parseInt(msg_list[5]);
             String announce_msg = msg.substring(msg_list[0].length() + msg_list[1].length() + msg_list[2].length() + msg_list[3].length() + msg_list[4].length() + msg_list[5].length() + 6);
@@ -128,7 +194,7 @@ public class AnnouncePlugin extends SuperPlugin
     public void autoAnnounce()
     {
         Calendar calendar = Calendar.getInstance();
-        int hour = calendar.get(Calendar.HOUR);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
         int amount = announce_list.size();
         for(int i=0;i<amount;i++)
@@ -145,10 +211,13 @@ public class AnnouncePlugin extends SuperPlugin
                     CQGlobal.robots.get(announceInfo.announcer).sendGroupMsg(announceInfo.target,announceInfo.msg,false);
             }
         }
+        System.out.print(hour);
+        System.out.print(":");
+        System.out.println(minute);
     }
 }
 
-class AnnounceInfo
+class AnnounceInfo implements Serializable
 {
     public String msg;
     int type;//0 for people, 1 for group
