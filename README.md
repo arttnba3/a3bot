@@ -1,6 +1,6 @@
 # a3bot-说明文档
 ## 简介
-a3bot是由arttnba3开发的一个基于~~酷Q（已经没有🌶）、~~mirai、cqhttp、[springCQ](https://github.com/lz1998/Spring-CQ)的一个自用型QQ机器人
+a3bot是由arttnba3开发的一个基于~~酷Q、~~mirai、cqhttp、[springCQ](https://github.com/lz1998/Spring-CQ)的一个自用型QQ机器人
 
 本机器人使用反向ws代理，默认端口8081
 
