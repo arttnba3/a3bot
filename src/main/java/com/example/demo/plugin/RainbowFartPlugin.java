@@ -1,5 +1,6 @@
 package com.example.demo.plugin;
 
+import a3lib.SuperPlugin;
 import net.lz1998.cq.event.message.CQGroupMessageEvent;
 import net.lz1998.cq.event.message.CQPrivateMessageEvent;
 import net.lz1998.cq.robot.CQPlugin;
@@ -13,20 +14,29 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 @Component
-public class RainbowFartPlugin extends CQPlugin
+public class RainbowFartPlugin extends SuperPlugin
 {
     String request_url = "https://chp.shadiao.app/api.php?level=";
-    int level = 114514;
+    long level = 114514;
+
+    public RainbowFartPlugin()
+    {
+        plugin_name = "RainbowFartPlugin";
+    }
 
     @Override
     public int onPrivateMessage(CoolQ cq, CQPrivateMessageEvent event)
     {
+        if(!is_enabled)
+            return MESSAGE_IGNORE;
         return MESSAGE_IGNORE;
     }
 
     @Override
     public int onGroupMessage(CoolQ cq, CQGroupMessageEvent event)
     {
+        if(!is_enabled)
+            return MESSAGE_IGNORE;
         // 获取 消息内容 群号 发送者QQ
         String msg = event.getMessage();
         long groupId = event.getGroupId();
@@ -44,6 +54,8 @@ public class RainbowFartPlugin extends CQPlugin
 
                 String rainbow_msg = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream(),"UTF-8")).readLine();
                 cq.sendGroupMsg(groupId,rainbow_msg,false);
+
+                httpURLConnection.disconnect();
             }
             catch (Exception e)
             {
@@ -52,6 +64,25 @@ public class RainbowFartPlugin extends CQPlugin
             return MESSAGE_BLOCK;
         }
 
+        else if(msg.length()>12)
+        {
+            if(msg.substring(0,12).equals("/rainbow set"))
+            {
+                try
+                {
+                    long level = Long.valueOf(msg.substring(10));
+                    this.level = level;
+                    cq.sendGroupMsg(groupId,"Success.",false);
+                    return MESSAGE_BLOCK;
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                    cq.sendGroupMsg(groupId,"incorrect argument(s) input",false);
+                    return MESSAGE_BLOCK;
+                }
+            }
+        }
         return MESSAGE_IGNORE;
     }
 

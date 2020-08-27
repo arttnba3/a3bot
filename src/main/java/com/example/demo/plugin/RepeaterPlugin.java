@@ -1,8 +1,8 @@
 package com.example.demo.plugin;
 
+import a3lib.SuperPlugin;
 import net.lz1998.cq.event.message.CQGroupMessageEvent;
 import net.lz1998.cq.event.message.CQPrivateMessageEvent;
-import net.lz1998.cq.robot.CQPlugin;
 import net.lz1998.cq.robot.CoolQ;
 import org.springframework.stereotype.Component;
 
@@ -10,19 +10,28 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class RepeaterPlugin extends CQPlugin
+public class RepeaterPlugin extends SuperPlugin
 {
     Map map = new HashMap();
+
+    public RepeaterPlugin()
+    {
+        plugin_name = "RepeaterPlugin";
+    }
 
     @Override
     public int onPrivateMessage(CoolQ cq, CQPrivateMessageEvent event)
     {
+        if(!is_enabled)
+            return MESSAGE_IGNORE;
         return MESSAGE_IGNORE;
     }
 
     @Override
     public int onGroupMessage(CoolQ cq, CQGroupMessageEvent event)
     {
+        if(!is_enabled)
+            return MESSAGE_IGNORE;
         String msg = event.getMessage();
         long groupId = event.getGroupId();
         long userId = event.getUserId();
