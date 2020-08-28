@@ -108,12 +108,15 @@ public class MineSweeperGamePlugin extends SuperPlugin {
                     break;
                 case WIN:
                     cq.sendGroupMsg(groupId, "你赢了", false);
+                    mineSweeperGame.exploreAll();
                     cq.sendGroupMsg(groupId, mineSweeperGame.getMap(), false);
+                    mineSweeperGame = null;
                     break;
                 case LOSE:
                     cq.sendGroupMsg(groupId, "你输了", false);
-                    //TODO: 开全图
+                    mineSweeperGame.exploreAll();
                     cq.sendGroupMsg(groupId, mineSweeperGame.getMap(), false);
+                    mineSweeperGame = null;
                     break;
                 case NORMAL:
                     cq.sendGroupMsg(groupId, mineSweeperGame.getMap(), false);
@@ -195,7 +198,7 @@ enum MineSweeperBlockType {
 
 class MineSweeperGame {
     private MineSweeperGameMap map;
-    private final double factory = 0.1;
+    private final double factory = 0.2;
     public MineSweeperGame(int height, int width, int mines){
         if(mines < 1 || mines > factory * height * width)
             throw new IllegalArgumentException("地雷数目不恰当");
@@ -212,6 +215,10 @@ class MineSweeperGame {
 
     public String getMap(){
         return map.toString();
+    }
+
+    public void exploreAll(){
+        map.exploreAll();
     }
 
     public MineSweeperGameStatus move(int x, int y, String command){
@@ -326,6 +333,8 @@ class MineSweeperGameMap {
             isLost = true;
             return false;
         }
+        if(mark[x][y] == MineSweeperMarkType.FLAG || mark[x][y] == MineSweeperMarkType.DANGER)
+            return true;
         if(mark[x][y] == MineSweeperMarkType.UNEXPLORED){
             mark[x][y] = MineSweeperMarkType.EXPLORED;
             exploredCnt++;
@@ -342,6 +351,14 @@ class MineSweeperGameMap {
             }
         }
         return true;
+    }
+
+    public void exploreAll(){
+        for(int i = 0; i < height; i++){
+            for(int j = 0; j < width; j++){
+                mark[i][j] = MineSweeperMarkType.EXPLORED;
+            }
+        }
     }
 
     public boolean flag(int x, int y){
