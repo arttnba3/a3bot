@@ -20,21 +20,29 @@ public class MineSweeperGamePlugin extends SuperPlugin {
                                      "注意：坐标从0开始\n";
 
     public MineSweeperGamePlugin(){
-        plugin_name = "MineSweeperGame";
+        plugin_name = "MineSweeperGamePlugin";
 
     }
 
     @Override
-    public int onPrivateMessage(CoolQ cq, CQPrivateMessageEvent event) {
+    public int onPrivateMessage(CoolQ cq, CQPrivateMessageEvent event)
+    {
+        if(!is_enabled)
+            return MESSAGE_IGNORE;
 
-        return super.onPrivateMessage(cq, event);
+        return MESSAGE_IGNORE;
     }
 
     @Override
-    public int onGroupMessage(CoolQ cq, CQGroupMessageEvent event) {
+    public int onGroupMessage(CoolQ cq, CQGroupMessageEvent event)
+    {
+        if(!is_enabled)
+            return MESSAGE_IGNORE;
+
         long userId = event.getUserId();
         long groupId = event.getGroupId();
         String msg = event.getMessage();
+
         if(msg.toLowerCase().equals("/mine")){
             cq.sendGroupMsg(groupId, HELP_INFO, false);
             return MESSAGE_BLOCK;
