@@ -476,4 +476,25 @@ class MineSweeperGameMap {
 
     }
 
+    public String getAllMap(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("   ");
+        for(int i = 0; i < width; i++)
+            sb.append(String.format("%-3d", i));
+        sb.append("\n");
+        for(int i = 0; i < height; i++){
+            sb.append(String.format("%-2d ", i));
+            for(int j = 0; j < width; j++){
+                if(map[i][j].isSpace())
+                    sb.append(String.format("%-2s ",". "));
+                else if(map[i][j].isHint())
+                    sb.append(String.format("%-2s ",map[i][j].getIndex()));
+                else
+                    sb.append("\u263C ");
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
+
 }
