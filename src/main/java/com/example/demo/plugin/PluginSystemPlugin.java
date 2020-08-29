@@ -68,7 +68,7 @@ public class PluginSystemPlugin extends CQPlugin
         long userId = event.getUserId();
         long groupId = event.getGroupId();
         String msg = event.getMessage();
-        String message = "当前所装载的插件有：";
+        String message = "当前所启用的插件有：";
         if(msg.equals("/Plugin")||msg.equals("/plugin"))
         {
             SuperPlugin superPlugin;
@@ -82,11 +82,12 @@ public class PluginSystemPlugin extends CQPlugin
         }
         if(msg.equals("/plugin all")||msg.equals("/Plugin all"))
         {
+            message = "当前所装载的插件有：";
             SuperPlugin superPlugin;
             for(int i=0;i<plugin_list.size();i++)
             {
                 superPlugin = plugin_list.get(i);
-                message += superPlugin.toString()+"\n";
+                message += "\n" + superPlugin.toString() + (superPlugin.is_enabled?"":"（未启用）");
             }
             cq.sendGroupMsg(groupId,message,false);
         }

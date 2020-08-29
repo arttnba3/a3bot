@@ -37,12 +37,18 @@ public class DemoPlugin extends SuperPlugin
      * @return 是否继续调用下一个插件，IGNORE表示继续，BLOCK表示不继续
      */
     @Override
-    public int onPrivateMessage(CoolQ cq, CQPrivateMessageEvent event) {
+    public int onPrivateMessage(CoolQ cq, CQPrivateMessageEvent event)
+    {
+        //为了纳入插件管理系统，以下两行必不可少！
+        if(!is_enabled)
+            return MESSAGE_IGNORE;
+
         // 获取 发送者QQ 和 消息内容
         long userId = event.getUserId();
         String msg = event.getMessage();
 
-        if (msg.equals("hi")) {
+        if (msg.equals("hi"))
+        {
             // 调用API发送hello
             //cq.sendPrivateMsg(userId, "hello", false);
             //cq.sendPrivateMsg(1543127579,"aaa",true);
@@ -63,13 +69,19 @@ public class DemoPlugin extends SuperPlugin
      * @return 是否继续调用下一个插件，IGNORE表示继续，BLOCK表示不继续
      */
     @Override
-    public int onGroupMessage(CoolQ cq, CQGroupMessageEvent event) {
+    public int onGroupMessage(CoolQ cq, CQGroupMessageEvent event)
+    {
+        //为了纳入插件管理系统，以下两行必不可少！
+        if(!is_enabled)
+            return MESSAGE_IGNORE;
+
         // 获取 消息内容 群号 发送者QQ
         String msg = event.getMessage();
         long groupId = event.getGroupId();
         long userId = event.getUserId();
 
-        if (msg.equals("hello")) {
+        if (msg.equals("hello"))
+        {
             // 回复内容为 at发送者 + hi
             String result = CQCode.at(userId) + "hi";
 
