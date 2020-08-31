@@ -17,7 +17,16 @@ a3bot是由arttnba3开发的一个基于~~酷Q~~mirai、cqhttp、[springCQ](http
 
 > 注：第一次登录bot还需要进行繁琐的身份验证（万恶的腾讯的奇妙机制x
 
+## 打包
+可使用如下指令打包a3bot本体为jar包：
+
+```mvn package clean```
+
+打包好的jar包默认会出现在```target/```目录下
+
 ## 已实装插件
+插件默认全部开启
+
 - 复读姬1.0
 - 自动播报1.1（添加存档功能）
 - 签到系统2.0.2（修复了一个没被发现的2.0版本遗留bug（文件流未刷新导致数据重复））
@@ -32,7 +41,7 @@ a3bot是由arttnba3开发的一个基于~~酷Q~~mirai、cqhttp、[springCQ](http
 - 最强舔狗1.0（基于🌈屁）
 - moeCTF 2020 - 播报插件1.0
 - ~~杀🐎2.0~~（**接口已无法使用**，程度修改指令/nmsl set [level]）
-- ~~自动化杀🐎1.0~~（**接口已无法使用**，仅开放admin权限，data/sb_list.txt下的第一个是admin~~（毕竟要渡人先渡己）~~，指令：/anti add [id]与/anti del [id]）
+- ~~自动化杀🐎1.0~~（**接口已无法使用**，仅开放admin权限，data/sb_list.txt下的第一个是admin（~~毕竟要渡人先渡己~~），指令：/anti add [id]与/anti del [id]）
 
 ## 我想开发新插件...
 
