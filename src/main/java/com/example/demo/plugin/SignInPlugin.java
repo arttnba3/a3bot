@@ -199,6 +199,8 @@ public class SignInPlugin extends SuperPlugin
     @Scheduled(cron = "0 0 5 * * ? ")
     public void resetList()
     {
+        if(!is_enabled)
+            return;
         pri_sign_in_list = new ArrayList<>();
         gro_sign_in_list = new HashMap<>();
         try

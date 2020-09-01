@@ -226,6 +226,8 @@ public class EnglishSignInPlugin extends SuperPlugin
     @Scheduled(cron = "0 0 0 * * ? ")
     public void resetList()
     {
+        if(!is_enabled)
+            return;
         for(Object gi:clock_in_list.values())
         {
             ArrayList group_info = (ArrayList)gi;
