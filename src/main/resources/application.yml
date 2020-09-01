@@ -13,6 +13,7 @@ spring:
       - com.example.demo.plugin.AntiSbPlugin
       - com.example.demo.plugin.FlattererPlugin
       - com.example.demo.plugin.LegendsOfThreeKingdomPlugin
+      - com.example.demo.plugin.EnglishSignInPlugin
       - com.example.demo.plugin.SignInPlugin
       - com.example.demo.plugin.RollPlugin
       - com.example.demo.plugin.HitokotoPlugin
