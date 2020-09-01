@@ -6,6 +6,13 @@ import net.lz1998.cq.event.message.CQPrivateMessageEvent;
 import net.lz1998.cq.robot.CoolQ;
 import org.springframework.stereotype.Component;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.Date;
+
 @Component
 public class MineSweeperGamePlugin extends SuperPlugin {
     private MineSweeperGame mineSweeperGame;
@@ -117,17 +124,35 @@ public class MineSweeperGamePlugin extends SuperPlugin {
                 case WIN:
                     cq.sendGroupMsg(groupId, "你赢了", false);
                     mineSweeperGame.exploreAll();
-                    cq.sendGroupMsg(groupId, mineSweeperGame.getMap(), false);
+                    try {
+                        File img = mineSweeperGame.getImgMapAll();
+                        cq.sendGroupMsg(groupId, "[CQ:image,file=" + img.getAbsolutePath() + "]", false);
+                    } catch (IOException e) {
+                        cq.sendGroupMsg(groupId, "获取数据失败", false);
+                        return MESSAGE_BLOCK;
+                    }
+
                     mineSweeperGame = null;
                     break;
                 case LOSE:
                     cq.sendGroupMsg(groupId, "你输了", false);
-                    mineSweeperGame.exploreAll();
-                    cq.sendGroupMsg(groupId, mineSweeperGame.getMap(), false);
+                    try {
+                        File img = mineSweeperGame.getImgMapAll();
+                        cq.sendGroupMsg(groupId, "[CQ:image,file=" + img.getAbsolutePath() + "]", false);
+                    } catch (IOException e) {
+                        cq.sendGroupMsg(groupId, "获取数据失败", false);
+                        return MESSAGE_BLOCK;
+                    }
                     mineSweeperGame = null;
                     break;
                 case NORMAL:
-                    cq.sendGroupMsg(groupId, mineSweeperGame.getMap(), false);
+                    try {
+                        File img = mineSweeperGame.getImgMap();
+                        cq.sendGroupMsg(groupId, "[CQ:image,file=" + img.getAbsolutePath() + "]", false);
+                    } catch (IOException e) {
+                        cq.sendGroupMsg(groupId, "获取数据失败", false);
+                        return MESSAGE_BLOCK;
+                    }
                     break;
             }
             return MESSAGE_BLOCK;
@@ -205,9 +230,12 @@ enum MineSweeperBlockType {
 }
 
 class MineSweeperGame {
-    private MineSweeperGameMap map;
-    private final double factory = 0.2;
+    private final MineSweeperGameMap map;
+    private final static double factory = 0.2;
     public MineSweeperGame(int height, int width, int mines){
+        if(height > 30 || width > 30 || height < 5 || width < 5){
+            throw new IllegalArgumentException("尺寸不恰当");
+        }
         if(mines < 1 || mines > factory * height * width)
             throw new IllegalArgumentException("地雷数目不恰当");
         map = new MineSweeperGameMap(height, width);
@@ -224,6 +252,10 @@ class MineSweeperGame {
     public String getMap(){
         return map.toString();
     }
+
+    public File getImgMap() throws IOException { return map.getImgMap(); }
+
+    public File getImgMapAll() throws IOException { return map.getImgMapAll(); }
 
     public void exploreAll(){
         map.exploreAll();
@@ -505,4 +537,92 @@ class MineSweeperGameMap {
         return sb.toString();
     }
 
+    public File getImgMap() throws IOException {
+        File file = new File("./tmp/");
+        if(!file.exists())
+            file.mkdir();
+        BufferedImage img = MineSweeperMapDrawer.drawMap(map, mark);
+        Date date = new Date();
+        String filename = String.valueOf(date.toString().hashCode());
+        File imgFile = new File("./tmp/" + filename + ".png");
+        ImageIO.write(img, "png", imgFile);
+        return imgFile;
+    }
+
+    public File getImgMapAll() throws IOException {
+        File file = new File("./tmp/");
+        if(!file.exists())
+            file.mkdir();
+        BufferedImage img = MineSweeperMapDrawer.drawMap(map);
+        Date date = new Date();
+        String filename = String.valueOf(date.toString().hashCode());
+        File imgFile = new File("./tmp/" + filename + ".png");
+        ImageIO.write(img, "png", imgFile);
+        return imgFile;
+    }
+
+}
+
+final class MineSweeperMapDrawer {
+
+    private MineSweeperMapDrawer(){}
+
+
+    private final static int BLOCK_LENGTH = 10;
+
+    public static BufferedImage drawMap(MineSweeperBlockType[][] map, MineSweeperMarkType[][] mark){
+        int height = map.length;
+        int width = map[0].length;
+        if(height != mark.length || width != mark[0].length)
+            return null;
+        BufferedImage bi = new BufferedImage(BLOCK_LENGTH * (width + 2), BLOCK_LENGTH * (height + 2), BufferedImage.TYPE_BYTE_GRAY);
+        Graphics2D gd = (Graphics2D) bi.createGraphics();
+        gd.setPaint(Color.WHITE);
+        gd.fillRect(0, 0, BLOCK_LENGTH * (width + 2) + 1, BLOCK_LENGTH * (height + 2) + 1);
+        gd.setBackground(Color.WHITE);
+        gd.setPaint(Color.BLACK);
+        Font font = new Font("Times New Roman", Font.PLAIN, 10);
+
+//        System.out.print("   ");
+        for(int i = 0; i < width; i++)
+            gd.drawString(String.valueOf(i), (i + 2) * BLOCK_LENGTH,  BLOCK_LENGTH);
+//        System.out.println();
+        for(int i = 0; i < height; i++){
+            gd.drawString(String.valueOf(i), BLOCK_LENGTH, (i + 2) * (BLOCK_LENGTH));
+            for(int j = 0; j < width; j++){
+                switch (mark[i][j]){
+                    case UNEXPLORED:
+                        gd.drawString("■", (j + 2) * BLOCK_LENGTH, (i + 2) * BLOCK_LENGTH);
+                        break;
+                    case FLAG:
+                        gd.drawString("⚐", (j + 2) * BLOCK_LENGTH, (i + 2) * BLOCK_LENGTH);
+                        break;
+                    case DANGER:
+                        gd.drawString("?", (j + 1) * BLOCK_LENGTH, (i + 1) * BLOCK_LENGTH);
+                        break;
+                    default:
+                        if(map[i][j].isSpace())
+                            gd.drawString("□", (j + 2) * BLOCK_LENGTH, (i + 2) * BLOCK_LENGTH);
+//                            System.out.printf("%-2s ",". ");
+                        else if(map[i][j].isHint())
+                            gd.drawString(String.valueOf(map[i][j].getIndex()), (j + 2) * BLOCK_LENGTH, (i + 2) * BLOCK_LENGTH);
+                        else
+                            gd.drawString("☼", (j + 2) * BLOCK_LENGTH, (i + 2) * BLOCK_LENGTH);
+                }
+            }
+//            System.out.println();
+        }
+        return bi;
+
+    }
+
+    public static BufferedImage drawMap(MineSweeperBlockType[][] map){
+        MineSweeperMarkType[][] mark = new MineSweeperMarkType[map.length][map[0].length];
+        for(int i = 0; i < map.length; i++){
+            for(int j = 0; j < map[0].length; j++){
+                mark[i][j] = MineSweeperMarkType.EXPLORED;
+            }
+        }
+        return drawMap(map, mark);
+    }
 }
