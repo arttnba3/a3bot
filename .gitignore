@@ -31,3 +31,11 @@ build/
 .vscode/
 
 ### DATA ###
+
+
+### TEMP ###
+/tmp/
+
+
+### USER_INFO ###
+/conf/
