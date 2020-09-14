@@ -11,11 +11,14 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Date;
 
 @Component
 public class MineSweeperGamePlugin extends SuperPlugin {
     private MineSweeperGame mineSweeperGame;
+
+    long[] admin = {1543127579L, 1477881063L};
 
     private final String HELP_INFO = "欢迎使用扫雷游戏插件(by Golden-Pigeon)\n" +
                                      "你可以使用以下指令：\n" +
@@ -94,6 +97,38 @@ public class MineSweeperGamePlugin extends SuperPlugin {
                         exam_agr_cnt(parts, 4);
                         gs = mineSweeperGame.move(Integer.parseInt(parts[2]), Integer.parseInt(parts[3]), "unmark");
                         break;
+                    case "stop":
+//                        if(!Arrays.asList(admin).contains(userId)){
+//                            cq.sendGroupMsg(groupId, "Permission denied, authorization limited.", false);
+//                            return MESSAGE_BLOCK;
+//                        }
+                        for(long id:admin) {
+                            if(id == userId) {
+                                exam_agr_cnt(parts, 2);
+                                mineSweeperGame = null;
+                                cq.sendGroupMsg(groupId, "游戏已结束", false);
+                                return MESSAGE_BLOCK;
+                            }
+                        }
+                        cq.sendGroupMsg(groupId, "Permission denied, authorization limited.", false);
+                        return MESSAGE_BLOCK;
+                    case "cheat":
+                        for(long id:admin) {
+                            if (id == userId) {
+                                exam_agr_cnt(parts, 2);
+                                try {
+                                    File img = mineSweeperGame.getImgMapAll();
+                                    cq.sendGroupMsg(groupId, "[CQ:image,file=" + img.getAbsolutePath() + "]", false);
+                                    return MESSAGE_BLOCK;
+                                } catch (IOException e) {
+                                    cq.sendGroupMsg(groupId, "获取数据失败", false);
+                                    return MESSAGE_BLOCK;
+                                }
+                            }
+                        }
+                        cq.sendGroupMsg(groupId, "Permission denied, authorization limited.", false);
+                        return MESSAGE_BLOCK;
+
                     default:
                         throw new RuntimeException("未知参数");
 
@@ -123,7 +158,7 @@ public class MineSweeperGamePlugin extends SuperPlugin {
                     break;
                 case WIN:
                     cq.sendGroupMsg(groupId, "你赢了", false);
-                    mineSweeperGame.exploreAll();
+                    //mineSweeperGame.exploreAll();
                     try {
                         File img = mineSweeperGame.getImgMapAll();
                         cq.sendGroupMsg(groupId, "[CQ:image,file=" + img.getAbsolutePath() + "]", false);
@@ -131,7 +166,7 @@ public class MineSweeperGamePlugin extends SuperPlugin {
                         cq.sendGroupMsg(groupId, "获取数据失败", false);
                         return MESSAGE_BLOCK;
                     }
-
+                    mineSweeperGame.clearBuffer();
                     mineSweeperGame = null;
                     break;
                 case LOSE:
@@ -143,6 +178,7 @@ public class MineSweeperGamePlugin extends SuperPlugin {
                         cq.sendGroupMsg(groupId, "获取数据失败", false);
                         return MESSAGE_BLOCK;
                     }
+                    mineSweeperGame.clearBuffer();
                     mineSweeperGame = null;
                     break;
                 case NORMAL:
@@ -247,6 +283,12 @@ class MineSweeperGame {
                 cnt++;
         }
         System.out.println();
+    }
+
+
+    public boolean clearBuffer(){
+        File file = new File("./tmp/");
+        return file.delete();
     }
 
     public String getMap(){
@@ -581,14 +623,17 @@ final class MineSweeperMapDrawer {
         gd.fillRect(0, 0, BLOCK_LENGTH * (width + 2) + 1, BLOCK_LENGTH * (height + 2) + 1);
         gd.setBackground(Color.WHITE);
         gd.setPaint(Color.BLACK);
-        Font font = new Font("Times New Roman", Font.PLAIN, 10);
+        //Font font = new Font("Times New Roman", Font.PLAIN, 10);
+
 
 //        System.out.print("   ");
         for(int i = 0; i < width; i++)
             gd.drawString(String.valueOf(i), (i + 2) * BLOCK_LENGTH,  BLOCK_LENGTH);
 //        System.out.println();
         for(int i = 0; i < height; i++){
+
             gd.drawString(String.valueOf(i), BLOCK_LENGTH, (i + 2) * (BLOCK_LENGTH));
+
             for(int j = 0; j < width; j++){
                 switch (mark[i][j]){
                     case UNEXPLORED:
