@@ -35,7 +35,7 @@ a3bot是由arttnba3开发的一个基于~~酷Q~~mirai、cqhttp、[springCQ](http
 - 随机点餐1.0
 - 俄罗斯转盘1.0
 - 三国杀1.0
-- 扫雷1.0.1（感谢[Golden-Pigeon](https://github.com/Golden-Pigeon)！修复了未纳入插件管理系统的bug）
+- 扫雷2.0（感谢[Golden-Pigeon](https://github.com/Golden-Pigeon)！修复了未纳入插件管理系统的bug）
 - 初等学习2.0（实装存储功能，实装私聊教授，私聊与群组数据互通实现）
 - 一言1.0（/hitokoto {参数}，参数为可选选项）
 - 🌈屁1.5（开放程度修改指令/nmsl set [level]）
@@ -66,17 +66,18 @@ a3bot是由arttnba3开发的一个基于~~酷Q~~mirai、cqhttp、[springCQ](http
 > 
 
 ## to-do list
-开发插件系统
+**重构**插件系统
 
 开发几个基础插件
 
-- ~~防撤回~~（平台原因无法实现，~~希望某天能开发一个自己的酷Q？~~）
+重构权限设置（~~方便其他人使用~~
+
+- ~~防撤回~~（cqhttp原因无法实现，~~正在研究mirai中...~~）
 - 图灵api（有没有富佬支援一个充值账号XD）
-- 自动回复（开发中）
 - more...
 
 ## 特别鸣谢
 
 - 2020.6 - 感谢巨犇[Golden-Pigeon](https://github.com/Golden-Pigeon)提供的优化版的签到系统插件2.0！
 - 2020.6 - 感谢巨犇[Golden-Pigeon](https://github.com/Golden-Pigeon)提供的插件系统思路！
-- 2020.8 - 感谢巨犇[Golden-Pigeon](https://github.com/Golden-Pigeon)开发的扫雷游戏插件1.0！
+- 2020.8 - 感谢巨犇[Golden-Pigeon](https://github.com/Golden-Pigeon)开发的扫雷游戏插件2.0！
