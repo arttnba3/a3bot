@@ -63,7 +63,7 @@ a3bot是由arttnba3开发的一个基于~~酷Q~~mirai、cqhttp、[springCQ](http
 >             return MESSAGE_IGNORE;
 > ```
 >
-> 
+> 注：该方法将会在插件系统被优化后无效
 
 ## to-do list
 **重构**插件系统
