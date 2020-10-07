@@ -14,6 +14,8 @@ public class MoeController
     @PostMapping("/solves")
     public String SolveParam(@RequestParam("name") String name, @RequestParam("chall") String chall, @RequestParam("status") int status)
     {
+        if(1 == 1)
+            return "";
         long announcer = 2388937043L;
         long group = 1102180069L;
         if(status == 0)
@@ -32,6 +34,8 @@ public class MoeController
     @PostMapping("/new_user")
     public String UserParam(@RequestParam("name") String name, @RequestParam("email") String email)
     {
+        if(1 == 1)
+            return "";
         long announcer = 2388937043L;
         long group = 1002807498L;
         CQGlobal.robots.get(announcer).sendGroupMsg(group,"👶新用户注册：\n" + name + "\n" + email +"\n管理员注意查验身份！",false);
@@ -46,6 +50,8 @@ public class MoeController
     @PostMapping("/new_chall")
     public String ChallParam(@RequestParam("name") String name, @RequestParam("category") String category, @RequestParam("status") int status)
     {
+        if(1 == 1)
+            return "";
         long announcer = 2388937043L;
         long group = 1102180069L;
         if(status == 0)
