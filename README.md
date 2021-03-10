@@ -20,9 +20,11 @@ a3bot是由arttnba3开发的一个基于~~酷Q~~mirai、cqhttp、[springCQ](http
 ## 打包
 可使用如下指令打包a3bot本体为jar包：
 
-```mvn package clean```
+```mvn package```
 
 打包好的jar包默认会出现在```target/```目录下
+
+可以使用```mvn clean```清理已打包好的文件
 
 ## 已实装插件
 插件默认全部开启
