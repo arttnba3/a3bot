@@ -28,6 +28,7 @@ public class RepeaterPlugin extends SuperPlugin
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public int onGroupMessage(CoolQ cq, CQGroupMessageEvent event)
     {
         if(!is_enabled)

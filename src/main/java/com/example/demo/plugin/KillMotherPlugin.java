@@ -24,6 +24,7 @@ public class KillMotherPlugin extends SuperPlugin
     FileInputStream fileInputStream = null;
     FileOutputStream fileOutputStream = null;
 
+    @SuppressWarnings("unchecked")
     public KillMotherPlugin()
     {
         plugin_name = "KillMotherPlugin";
@@ -71,6 +72,7 @@ public class KillMotherPlugin extends SuperPlugin
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public int onGroupMessage(CoolQ cq, CQGroupMessageEvent event)
     {
         if(!is_enabled)

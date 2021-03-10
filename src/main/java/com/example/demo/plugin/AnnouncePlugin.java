@@ -16,7 +16,7 @@ import java.util.Map;
 @Component
 public class AnnouncePlugin extends SuperPlugin
 {
-    ArrayList<AnnounceInfo> announce_list = new ArrayList<>();
+    ArrayList<AnnounceInfo> announce_list = new ArrayList<AnnounceInfo>();
     String help_info = "用法：/announce [type] [announcer] [target] [hour] [minute] {msg}\n" +
             "其中type的可选项为：\nprivate\ngroup\n" +
             "announcer为播报机器人账号id" +
@@ -31,6 +31,7 @@ public class AnnouncePlugin extends SuperPlugin
         plugin_name = "AnnouncePlugin";
     }
 
+    @Override
     public int onPrivateMessage(CoolQ cq, CQPrivateMessageEvent event)
     {
         if(!is_enabled)
@@ -40,6 +41,7 @@ public class AnnouncePlugin extends SuperPlugin
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public int onGroupMessage(CoolQ cq, CQGroupMessageEvent event)
     {
         if(!is_enabled)

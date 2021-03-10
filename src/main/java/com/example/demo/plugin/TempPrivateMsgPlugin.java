@@ -11,7 +11,7 @@ import java.util.ArrayList;
 @Component
 public class TempPrivateMsgPlugin extends SuperPlugin
 {
-    ArrayList has_met_for_the_first_time = new ArrayList<Integer>();
+    ArrayList<Long> has_met_for_the_first_time = new ArrayList<Long>();
 
     public TempPrivateMsgPlugin()
     {

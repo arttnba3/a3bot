@@ -26,6 +26,7 @@ public class FlattererPlugin extends SuperPlugin
     FileInputStream fileInputStream = null;
     FileOutputStream fileOutputStream = null;
 
+    @SuppressWarnings("unchecked")
     public FlattererPlugin()
     {
         plugin_name = "FlattererPlugin";
@@ -72,6 +73,7 @@ public class FlattererPlugin extends SuperPlugin
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public int onGroupMessage(CoolQ cq, CQGroupMessageEvent event)
     {
         if(!is_enabled)

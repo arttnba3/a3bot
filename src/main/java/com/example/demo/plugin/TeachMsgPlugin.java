@@ -16,6 +16,7 @@ public class TeachMsgPlugin extends SuperPlugin
 {
     Map map = new HashMap();
 
+    @SuppressWarnings("unchecked")
     public TeachMsgPlugin()
     {
         plugin_name = "TeachMsgPlugin";
@@ -40,6 +41,7 @@ public class TeachMsgPlugin extends SuperPlugin
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public int onGroupMessage(CoolQ cq, CQGroupMessageEvent event)
     {
         if(!is_enabled)
@@ -168,6 +170,7 @@ public class TeachMsgPlugin extends SuperPlugin
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public int onPrivateMessage(CoolQ cq, CQPrivateMessageEvent event)
     {
         if(!is_enabled)

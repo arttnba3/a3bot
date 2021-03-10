@@ -26,6 +26,7 @@ public class PluginSystemPlugin extends CQPlugin
     @Autowired
     private List<SuperPlugin> plugin_list;
 
+    @SuppressWarnings("unchecked")
     public PluginSystemPlugin()
     {
         file = new File("data/permission_list.txt");
@@ -63,6 +64,7 @@ public class PluginSystemPlugin extends CQPlugin
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public int onGroupMessage(CoolQ cq, CQGroupMessageEvent event)
     {
         long userId = event.getUserId();

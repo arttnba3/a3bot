@@ -29,6 +29,7 @@ public class EnglishSignInPlugin extends SuperPlugin
                     + "off   暂停打卡历程\n"
                     + "多余的参数会被自动忽略";
 
+    @SuppressWarnings("unchecked")
     public EnglishSignInPlugin()
     {
         plugin_name = "EnglishSignInPlugin";
@@ -37,6 +38,7 @@ public class EnglishSignInPlugin extends SuperPlugin
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public int onPrivateMessage(CoolQ cq, CQPrivateMessageEvent event)
     {
         if (!is_enabled)
@@ -53,6 +55,8 @@ public class EnglishSignInPlugin extends SuperPlugin
         return MESSAGE_IGNORE;
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
     public int onGroupMessage(CoolQ cq, CQGroupMessageEvent event)
     {
         if (!is_enabled)
@@ -224,6 +228,7 @@ public class EnglishSignInPlugin extends SuperPlugin
     }
 
     @Scheduled(cron = "0 0 0 * * ? ")
+    @SuppressWarnings("unchecked")
     public void resetList()
     {
         if(!is_enabled)

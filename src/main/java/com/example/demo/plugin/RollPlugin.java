@@ -22,6 +22,7 @@ public class RollPlugin extends SuperPlugin
     String message = "用法：/roll {选项}\n其中多余的选项会被忽略\n当前可选选项有：\ndice\nmeal\nboom";
     int turn = 1;
 
+    @SuppressWarnings("unchecked")
     public RollPlugin()
     {
         plugin_name = "RollPlugin";
@@ -53,6 +54,7 @@ public class RollPlugin extends SuperPlugin
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public int onGroupMessage(CoolQ cq, CQGroupMessageEvent event)
     {
         if(!is_enabled)

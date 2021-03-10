@@ -26,6 +26,7 @@ public class AntiSbPlugin extends SuperPlugin
     FileInputStream fileInputStream = null;
     FileOutputStream fileOutputStream = null;
 
+    @SuppressWarnings("unchecked")
     public AntiSbPlugin()
     {
         plugin_name = "AntiSbPlugin";
@@ -72,6 +73,7 @@ public class AntiSbPlugin extends SuperPlugin
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public int onGroupMessage(CoolQ cq, CQGroupMessageEvent event)
     {
         if(!is_enabled)

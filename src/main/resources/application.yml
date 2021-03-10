@@ -8,8 +8,8 @@ spring:
     # 如果前一个功能返回MESSAGE_IGNORE，会继续执行下一个功能
     plugin-list:
       - com.example.demo.plugin.CompatPlugin
-      - com.example.demo.plugin.AnnouncePlugin
       - com.example.demo.plugin.PluginSystemPlugin
+      - com.example.demo.plugin.AnnouncePlugin
       - com.example.demo.plugin.AntiSbPlugin
       - com.example.demo.plugin.FlattererPlugin
       - com.example.demo.plugin.LegendsOfThreeKingdomPlugin
@@ -23,7 +23,7 @@ spring:
       - com.example.demo.plugin.TeachMsgPlugin
       - com.example.demo.plugin.TempPrivateMsgPlugin
       - com.example.demo.plugin.MineSweeperGamePlugin
-
+      - com.example.demo.plugin.CTFControllerPlugin
       
 
     # 下面配置event线程池，也可以删掉用默认的

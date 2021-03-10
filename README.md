@@ -40,7 +40,7 @@ a3bot是由arttnba3开发的一个基于~~酷Q~~mirai、cqhttp、[springCQ](http
 - 一言1.0（/hitokoto {参数}，参数为可选选项）
 - 🌈屁1.5（开放程度修改指令/nmsl set [level]）
 - 最强舔狗1.0（基于🌈屁）
-- moeCTF 2020 - 播报插件1.0
+- CTF播报插件0.1
 - ~~杀🐎2.0~~（**接口已无法使用**，程度修改指令/nmsl set [level]）
 - ~~自动化杀🐎1.0~~（**接口已无法使用**，仅开放admin权限，data/sb_list.txt下的第一个是admin（~~毕竟要渡人先渡己~~），指令：/anti add [id]与/anti del [id]）
 
