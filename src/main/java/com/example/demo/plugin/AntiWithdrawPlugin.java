@@ -27,6 +27,7 @@ public class AntiWithdrawPlugin extends SuperPlugin
     {
         if(!is_enabled)
             return MESSAGE_IGNORE;
+        System.out.println("type:" + event.getMessageType() + " id:" + event.getMessageId());
         return MESSAGE_IGNORE;
     }
 }

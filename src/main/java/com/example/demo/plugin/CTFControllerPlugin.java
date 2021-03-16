@@ -69,8 +69,6 @@ public class CTFControllerPlugin extends SuperPlugin
     {
         if(!is_enabled)
             return "";
-        long announcer = 2388937043L;
-        long group = 1102180069L;
         if(status == 0)
             CQGlobal.robots.get(announcer).sendGroupMsg(group,"⭐ 新题目上线：[" + category + "]" + name,false);
         else if(status == 1)

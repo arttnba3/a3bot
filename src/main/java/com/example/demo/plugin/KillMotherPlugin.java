@@ -17,7 +17,14 @@ import java.util.List;
 public class KillMotherPlugin extends SuperPlugin
 {
     String request_url = "https://nmsl.shadiao.app/api.php?level=";
-    long level = 114514;
+    String level = "min";
+    String help_info = "杀🦄插件，享受最激情的嘴臭\n"
+            + "用法：\n"
+            + "/nmsl                 --亲切问候您的家人\n"
+            + "/nmsl add [qq num]    ----让您的好友成为杀🦄客\n"
+            + "/nmsl del [qq num]    ----让杀🦄客成为🤡\n"
+            + "/nmsl set [level]     ----改变嘴臭等级\n"
+            + "多余的参数会自动与您的母亲一起身体力行解决🗾的少子化问题";
     long admin = 1543127579L;
     List permission_list = new ArrayList<Long>();
     File file = null;
@@ -82,121 +89,118 @@ public class KillMotherPlugin extends SuperPlugin
         long groupId = event.getGroupId();
         long userId = event.getUserId();
 
-        if (msg.equals("/nmsl"))
+        String[] args = msg.split(" ");
+
+        if (args[0].equals("/nmsl"))
         {
             if(!permission_list.contains(userId))
             {
                 cq.sendGroupMsg(groupId,"Permission denied, authorization limited.",false);
                 return MESSAGE_BLOCK;
             }
-            try
+            if(args.length == 1)
             {
-                URL url = new URL(request_url+String.valueOf(level));
-                HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
-                httpURLConnection.setDoInput(true);
-                httpURLConnection.setRequestMethod("GET");
-                httpURLConnection.connect();
-
-                String mother_killing_msg = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream(),"UTF-8")).readLine();
-                cq.sendGroupMsg(groupId,mother_killing_msg,false);
-
-                httpURLConnection.disconnect();
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-            return MESSAGE_BLOCK;
-        }
-        else if(msg.length()>9)
-        {
-            if(msg.substring(0,9).equals("/nmsl add"))
-            {
-                if(userId != admin)
-                {
-                    cq.sendGroupMsg(groupId,"Permission denied, authorization limited.",false);
-                    return MESSAGE_BLOCK;
-                }
                 try
                 {
-                    long new_user = Long.valueOf(msg.substring(10));//  /nmsl add userId
-                    if(permission_list.contains(new_user))
-                    {
-                        cq.sendGroupMsg(groupId,"Already permitted.",false);
-                        return MESSAGE_BLOCK;
-                    }
-                    permission_list.add(new_user);
-                    fileOutputStream.write('\n');
-                    writeID(new_user);
-                    cq.sendGroupMsg(groupId,"Success.",false);
-                    return MESSAGE_BLOCK;
-                }
-                catch (Exception e)
+                    URL url = new URL(request_url + level);
+                    HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                    httpURLConnection.setDoInput(true);
+                    httpURLConnection.setRequestMethod("GET");
+                    httpURLConnection.connect();
+
+                    String mother_killing_msg = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream(), "UTF-8")).readLine();
+                    cq.sendGroupMsg(groupId, mother_killing_msg, false);
+
+                    httpURLConnection.disconnect();
+                } catch (Exception e)
                 {
                     e.printStackTrace();
-                    cq.sendGroupMsg(groupId,"incorrect argument(s) input",false);
-                    return MESSAGE_BLOCK;
                 }
+                return MESSAGE_BLOCK;
             }
-
-            if(msg.substring(0,9).equals("/nmsl del"))
+            else if (args.length < 3)
             {
-                if(userId != admin)
+                cq.sendGroupMsg(groupId, help_info, false);
+                return MESSAGE_BLOCK;
+            }
+            else
+            {
+                if(args[1].equals("add"))
                 {
-                    cq.sendGroupMsg(groupId,"Permission denied, authorization limited.",false);
-                    return MESSAGE_BLOCK;
-                }
-                try
-                {
-                    long del_user = Long.valueOf(msg.substring(10));
-                    if(!permission_list.contains(del_user))
+                    if(userId != admin)
                     {
-                        cq.sendGroupMsg(groupId,"Permitted user not found.",false);
+                        cq.sendGroupMsg(groupId,"Permission denied, authorization limited.",false);
                         return MESSAGE_BLOCK;
                     }
-                    permission_list.remove(del_user);
-                    file.delete();
-                    file.createNewFile();
-                    fileOutputStream = new FileOutputStream(file);
-                    writeID(admin);
-                    for(int i = 1;i<permission_list.size();i++)
+                    try
                     {
+                        long new_user = Long.valueOf(args[2]);//  /nmsl add userId
+                        if(permission_list.contains(new_user))
+                        {
+                            cq.sendGroupMsg(groupId,"Already permitted.",false);
+                            return MESSAGE_BLOCK;
+                        }
+                        permission_list.add(new_user);
                         fileOutputStream.write('\n');
-                        writeID((Long) permission_list.get(i));
+                        writeID(new_user);
+                        cq.sendGroupMsg(groupId,"Success.",false);
+                        return MESSAGE_BLOCK;
                     }
-                    cq.sendGroupMsg(groupId,"Success.",false);
-                    return MESSAGE_BLOCK;
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                        cq.sendGroupMsg(groupId,"incorrect argument(s) input",false);
+                        return MESSAGE_BLOCK;
+                    }
                 }
-                catch (Exception e)
+                else if(args[1].equals("del"))
                 {
-                    e.printStackTrace();
-                    cq.sendGroupMsg(groupId,"incorrect argument(s) input",false);
-                    return MESSAGE_BLOCK;
+                    if(userId != admin)
+                    {
+                        cq.sendGroupMsg(groupId,"Permission denied, authorization limited.",false);
+                        return MESSAGE_BLOCK;
+                    }
+                    try
+                    {
+                        long del_user = Long.valueOf(args[2]);
+                        if(!permission_list.contains(del_user))
+                        {
+                            cq.sendGroupMsg(groupId,"Permitted user not found.",false);
+                            return MESSAGE_BLOCK;
+                        }
+                        permission_list.remove(del_user);
+                        file.delete();
+                        file.createNewFile();
+                        fileOutputStream = new FileOutputStream(file);
+                        writeID(admin);
+                        for(int i = 1;i<permission_list.size();i++)
+                        {
+                            fileOutputStream.write('\n');
+                            writeID((Long) permission_list.get(i));
+                        }
+                        cq.sendGroupMsg(groupId,"Success.",false);
+                        return MESSAGE_BLOCK;
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                        cq.sendGroupMsg(groupId,"incorrect argument(s) input",false);
+                        return MESSAGE_BLOCK;
+                    }
                 }
-            }
-
-            if(msg.substring(0,9).equals("/nmsl set"))
-            {
-                if(!permission_list.contains(userId))
+                else if(args[1].equals("set"))
                 {
-                    cq.sendGroupMsg(groupId,"Permission denied, authorization limited.",false);
-                    return MESSAGE_BLOCK;
-                }
-                try
-                {
-                    long level = Long.valueOf(msg.substring(10));
-                    this.level = level;
-                    cq.sendGroupMsg(groupId,"Success.",false);
-                    return MESSAGE_BLOCK;
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                    cq.sendGroupMsg(groupId,"incorrect argument(s) input",false);
+                    if(!permission_list.contains(userId))
+                    {
+                        cq.sendGroupMsg(groupId,"Permission denied, authorization limited.",false);
+                        return MESSAGE_BLOCK;
+                    }
+                    this.level = args[2];
                     return MESSAGE_BLOCK;
                 }
             }
         }
+
         return MESSAGE_IGNORE;
     }
 
