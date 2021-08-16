@@ -1,4 +1,7 @@
 # a3bot-说明文档
+
+# 本 bot 已停更，建议使用全新框架的的 [a3bot2](https://github.com/arttnba3/a3bot2)
+
 ## 简介
 a3bot是由arttnba3开发的一个基于~~酷Q~~mirai、cqhttp、[springCQ](https://github.com/lz1998/Spring-CQ)的一个自用型QQ机器人
 
