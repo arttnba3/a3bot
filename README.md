@@ -1,4 +1,4 @@
-# 因为当年的代码写的太烂了故本 bot 已停更，建议使用基于全新框架构造的 [a3bot2](https://github.com/arttnba3/a3bot2)
+# 因为当年的代码写的太烂了故本 bot 已停更，建议使用基于golang构造的 [a3bot3](https://github.com/arttnba3/a3bot3)
 
 # a3bot-说明文档
 
